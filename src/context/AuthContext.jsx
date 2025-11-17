@@ -44,8 +44,8 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       const response = await api.post('/auth/login', { email, password });
-      if (response.data && response.data.data.token) {
-        const { token, ...userData } = response.data.data;
+      if (response && response.token) {
+        const { token, ...userData } = response;
 
         setToken(token);
         setUser(userData);
@@ -71,8 +71,8 @@ export const AuthProvider = ({ children }) => {
         password,
         phoneNumber,
       });
-      if (response.data && response.data.data.token) {
-        const { token, ...userData } = response.data.data;
+      if (response && response.token) {
+        const { token, ...userData } = response;
 
         setToken(token);
         setUser(userData);
