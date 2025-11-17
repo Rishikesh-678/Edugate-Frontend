@@ -3,6 +3,7 @@ import axios from 'axios';
 // Create an axios instance
 const api = axios.create({
   baseURL: '/api', // The proxy will handle this
+  timeout: 10000, // 10 second timeout
   headers: {
     'Content-Type': 'application/json',
   },
@@ -44,6 +45,17 @@ api.interceptors.response.use(
       // Reload the window to clear all state and redirect to login
       window.location.href = '/';
     }
+    // Return the error with a fallback message if no response
+    if (!error.response) {
+      console.error('Network error or backend unavailable:', error.message);
+      return Promise.reject({
+        response: {
+          data: {
+            message: 'Backend server is unavailable. Please try again later.',
+          },
+        },
+      });
+    }
     return Promise.reject(error);
   }
 );
@@ -53,6 +65,7 @@ api.interceptors.response.use(
 */
 const apiFormData = axios.create({
   baseURL: '/api',
+  timeout: 30000, // 30 second timeout for file uploads
   headers: {
     'Content-Type': 'multipart/form-data',
   },
@@ -75,6 +88,17 @@ apiFormData.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/';
+    }
+    // Return the error with a fallback message if no response
+    if (!error.response) {
+      console.error('Network error or backend unavailable:', error.message);
+      return Promise.reject({
+        response: {
+          data: {
+            message: 'Backend server is unavailable. Please try again later.',
+          },
+        },
+      });
     }
     return Promise.reject(error);
   }

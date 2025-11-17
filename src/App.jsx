@@ -24,7 +24,18 @@ import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import AdminManageUsersPage from './pages/admin/AdminManageUsersPage.jsx';
 
 function App() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-gray-100">
+        <div className="text-center">
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-primary mx-auto"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Redirect logic after login
   const getHomeRoute = () => {

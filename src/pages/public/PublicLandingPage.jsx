@@ -1,24 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import CourseCard from '../../components/common/CourseCard.jsx';
-
-// Mock data, this will come from your API
-const mockCourses = [
-  { id: 1, courseName: 'AI', thumbnailUrl: null, placeholderImg: 'AI' },
-  {
-    id: 2,
-    courseName: 'Machine Learning',
-    thumbnailUrl: null,
-    placeholderImg: 'ML',
-  },
-];
+import { getLiveCourses } from '../../services/apiService.js';
 
 export default function PublicLandingPage() {
-  // In a real app, you'd use:
-  // const [courses, setCourses] = useState([]);
-  // useEffect(() => {
-  //   getLiveCourses().then(response => setCourses(response.data));
-  // }, []);
-  // For now, we use mocks.
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    // Only fetch courses if not on the public landing (to avoid auto-loading)
+    // This page can work without data - it's the public home page
+    setLoading(false);
+    setError('');
+  }, []);
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -59,20 +53,50 @@ export default function PublicLandingPage() {
 
       {/* Essential Skills Section */}
       <div>
-        <h2 className="mb-8 text-3xl font-bold">
-          Learn Essential Skills...
-        </h2>
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-6">
-          {mockCourses.map((course) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              linkTo={`/course/${course.id}`} // This will go to CourseDetailPage
-              placeholderImg={course.placeholderImg}
-            />
-          ))}
-          {/* Add more placeholders as needed */}
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-3xl font-bold">
+            Learn Essential Skills...
+          </h2>
+          <button
+            onClick={() => {
+              setLoading(true);
+              setError('');
+              getLiveCourses()
+                .then((response) => {
+                  setCourses(response.data || response || []);
+                })
+                .catch((err) => {
+                  console.error('Failed to fetch courses:', err);
+                  setError('Failed to load courses. Please try again later.');
+                  setCourses([]);
+                })
+                .finally(() => setLoading(false));
+            }}
+            className="rounded-md border border-gray-400 px-4 py-2 text-sm font-medium hover:bg-gray-100"
+          >
+            Refresh
+          </button>
         </div>
+        {error && (
+          <p className="mb-4 rounded-md bg-red-100 p-3 text-sm text-red-700">
+            {error}
+          </p>
+        )}
+        {loading ? (
+          <div className="py-8 text-center text-gray-600">Loading courses...</div>
+        ) : courses.length === 0 ? (
+          <div className="py-8 text-center text-gray-600">No courses available yet. Click Refresh to reload.</div>
+        ) : (
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-6">
+            {courses.map((course) => (
+              <CourseCard
+                key={course.id}
+                course={course}
+                linkTo={`/course/${course.id}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

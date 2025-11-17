@@ -13,15 +13,9 @@ export default function Footer() {
             <li>9876543210</li>
           </ul>
         </div>
-        <div>
-          <h3 className="mb-2 text-sm font-semibold text-gray-500">
-            About US
-          </h3>
-          <p className="max-w-xs text-sm text-gray-700">
-            At EduGate, we believe quality education should be accessible to
-            everyone. Our platform connects learners with expert instructors.
-          </p>
-        </div>
+
+        {/* --- About Us section removed --- */}
+
         <div className="text-right">
           <h2 className="text-2xl font-bold text-primary">EduGate</h2>
         </div>

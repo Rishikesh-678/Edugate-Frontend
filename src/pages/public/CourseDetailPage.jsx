@@ -1,30 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-import { subscribeToCourse } from '../../services/apiService';
-
-// Mock data, this will come from your API
-const mockCourse = {
-  id: 1,
-  courseName: 'Spring Boot',
-  instructor: 'Programming With Mosh',
-  category: 'Programming',
-  videoLink: 'https://www.youtube.com/embed/vtPkZShrvXQ',
-  thumbnailUrl:
-    'https://img.youtube.com/vi/vtPkZShrvXQ/maxresdefault.jpg',
-};
+import { useAuth } from '../../context/AuthContext.jsx';
+import { subscribeToCourse } from '../../services/apiService.js';
+import api from '../../services/apiService.js';
+import Breadcrumbs from '../../components/common/BreadCrumps.jsx';
 
 export default function CourseDetailPage() {
   const { id } = useParams();
   const { user } = useAuth();
-  // In a real app:
-  // const [course, setCourse] = useState(null);
-  // useEffect(() => {
-  //   api.get(`/api/user/course/${id}`).then(res => setCourse(res.data));
-  // }, [id]);
-  // if (!course) return <div>Loading...</div>;
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const course = mockCourse; // Using mock for now
+  useEffect(() => {
+    setLoading(true);
+    setError('');
+    api
+      .get(`/user/courses/${id}`)
+      .then((res) => {
+        setCourse(res.data || res);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch course:', err);
+        setError('Failed to load course. Please try again later.');
+      })
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-12 text-center">
+        <p className="text-gray-600">Loading course details...</p>
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-12 text-center">
+        <p className="text-red-600">{error || 'Course not found.'}</p>
+      </div>
+    );
+  }
+
+  // --- NEW BREADCRUMB DATA ---
+  const breadcrumbs = [
+    { name: 'Home', path: user ? '/dashboard' : '/' },
+    { name: course.courseName }, // Current page
+  ];
+  // ----------------------------
 
   const handleSubscribe = async () => {
     try {
@@ -61,6 +85,12 @@ export default function CourseDetailPage() {
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* --- ADD BREADCRUMBS HERE --- */}
+      <div className="mb-6">
+        <Breadcrumbs crumbs={breadcrumbs} />
+      </div>
+      {/* ----------------------------- */}
+
       <div className="flex flex-col items-start justify-between md:flex-row">
         {/* Course Info */}
         <div className="mb-4 md:mb-0">
