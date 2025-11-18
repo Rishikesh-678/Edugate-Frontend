@@ -11,3 +11,34 @@ body {
   font-family: 'Inter', sans-serif;
   @apply bg-white text-secondary;
 }
+
+/* Typing area effects */
+@keyframes inputFocus {
+  from {
+    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.4);
+  }
+  to {
+    box-shadow: 0 0 0 8px rgba(251, 146, 60, 0);
+  }
+}
+
+@keyframes smoothBorderGlow {
+  0% {
+    border-color: rgb(209, 213, 219);
+  }
+  50% {
+    border-color: rgb(251, 146, 60);
+  }
+  100% {
+    border-color: rgb(251, 146, 60);
+  }
+}
+
+.input-field-typing {
+  @apply block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm transition-all duration-300;
+}
+
+.input-field-typing:focus {
+  @apply border-primary focus:ring-2 focus:ring-primary outline-none;
+  animation: inputFocus 0.6s ease-out;
+}

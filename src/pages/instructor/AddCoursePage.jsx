@@ -101,7 +101,7 @@ export default function AddCoursePage() {
             value={courseName}
             onChange={(e) => setCourseName(e.target.value)}
             required
-            className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
         <div>
@@ -117,7 +117,7 @@ export default function AddCoursePage() {
             value={instructor}
             onChange={(e) => setInstructor(e.target.value)}
             required
-            className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
         <div>
@@ -133,7 +133,7 @@ export default function AddCoursePage() {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             required
-            className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
         <div>
@@ -150,7 +150,7 @@ export default function AddCoursePage() {
             onChange={(e) => setVideoLink(e.target.value)}
             required
             placeholder="https://www.youtube.com/watch?v=..."
-            className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+            className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
         <div>
@@ -166,11 +166,13 @@ export default function AddCoursePage() {
             accept="image/*"
             onChange={(e) => setThumbnail(e.target.files[0])}
             required
-            className="mt-1 block w-full text-sm text-gray-500
+            className="mt-1 block w-full text-sm text-gray-500 transition-all duration-300
               file:mr-4 file:rounded-full file:border-0
               file:bg-primary/20 file:px-4 file:py-2
               file:text-sm file:font-semibold file:text-primary
-              hover:file:bg-primary/30"
+              file:transition-all file:duration-300
+              hover:file:bg-primary/30 hover:file:scale-105
+              focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
       </form>

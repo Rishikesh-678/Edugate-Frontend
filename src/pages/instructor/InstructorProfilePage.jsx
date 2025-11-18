@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { getMyProfile, updateMyProfile, getMyCourses } from '../../services/apiService.js';
 import CourseCarousel from '../../components/common/CourseCarousel.jsx';
+import ChangePasswordModal from '../../components/auth/ChangePasswordModal.jsx';
 
 export default function InstructorProfilePage() {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function InstructorProfilePage() {
   const [message, setMessage] = useState('');
   const [myCourses, setMyCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   const fetchMyCourses = () => {
     getMyCourses()
@@ -96,7 +98,7 @@ export default function InstructorProfilePage() {
               id="fullName"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
+              className="input-field-typing"
             />
           </div>
           <div>
@@ -127,15 +129,24 @@ export default function InstructorProfilePage() {
               id="phoneNumber"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
+              className="input-field-typing"
             />
           </div>
-          <button
-            type="submit"
-            className="rounded-md bg-primary px-6 py-2 font-semibold text-black hover:bg-primary-dark"
-          >
-            Update Profile
-          </button>
+          <div className="flex gap-4">
+            <button
+              type="submit"
+              className="rounded-md bg-primary px-6 py-2 font-semibold text-black hover:bg-primary-dark"
+            >
+              Update Profile
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsChangePasswordOpen(true)}
+              className="rounded-md border border-primary px-6 py-2 font-semibold text-primary hover:bg-primary hover:text-black transition-colors"
+            >
+              Change Password
+            </button>
+          </div>
         </form>
 
         {/* Avatar */}
@@ -157,6 +168,12 @@ export default function InstructorProfilePage() {
           <CourseCarousel courses={myCourses} />
         )}
       </div>
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal 
+        isOpen={isChangePasswordOpen} 
+        onClose={() => setIsChangePasswordOpen(false)} 
+      />
     </div>
   );
 }

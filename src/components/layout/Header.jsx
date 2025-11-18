@@ -51,8 +51,8 @@ export default function Header() {
     return 'Search courses...';
   };
 
-  // Hide search bar on profile pages
-  const showSearchBar = location.pathname !== '/profile' && location.pathname !== '/instructor/profile';
+  // Hide search bar on profile pages, course detail page, add course, my courses, and public landing page
+  const showSearchBar = location.pathname !== '/' && location.pathname !== '/profile' && location.pathname !== '/instructor/profile' && !location.pathname.startsWith('/course/') && location.pathname !== '/instructor/add-course' && location.pathname !== '/my-courses' && !location.pathname.startsWith('/instructor/edit-course/');
 
   return (
     <>

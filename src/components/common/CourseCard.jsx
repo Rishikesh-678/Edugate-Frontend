@@ -28,23 +28,23 @@ export default function CourseCard({
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow duration-300 hover:shadow-md">
-      <Link to={linkTo} className="block">
+    <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary group cursor-pointer">
+      <Link to={linkTo} className="block overflow-hidden">
         <img
           src={course.thumbnailUrl || getFallback()}
           alt={course.courseName}
-          className="aspect-video w-full object-cover"
+          className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-105"
           onError={(e) => (e.target.src = getFallback())}
         />
       </Link>
       <div className="p-4">
         <Link to={linkTo}>
-          <h3 className="truncate font-semibold text-gray-800" title={course.courseName}>
+          <h3 className="truncate font-semibold text-gray-800 transition-colors duration-300 group-hover:text-primary" title={course.courseName}>
             {course.courseName || 'Course Title'}
           </h3>
         </Link>
         {course.instructor && (
-          <p className="mt-1 text-sm text-gray-600">{course.instructor}</p>
+          <p className="mt-1 text-sm text-gray-600 transition-colors duration-300 group-hover:text-gray-700">{course.instructor}</p>
         )}
         {children && <div className="mt-4">{children}</div>}
       </div>
