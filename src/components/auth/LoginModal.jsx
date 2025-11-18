@@ -60,7 +60,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
@@ -76,7 +76,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToSignUp }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
             />
           </div>
           <button

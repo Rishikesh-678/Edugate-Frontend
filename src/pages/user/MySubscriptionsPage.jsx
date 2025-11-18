@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import CourseCard from '../../components/common/CourseCard.jsx';
+import { useNavigate } from 'react-router-dom';
+import CourseCarousel from '../../components/common/CourseCarousel.jsx';
 import {
   unsubscribeFromCourse,
   getMySubscriptions,
   getLiveCourses,
 } from '../../services/apiService.js';
-import Breadcrumbs from '../../components/common/BreadCrumps.jsx';
+import ConfirmationModal from '../../components/common/ConfirmationModal.jsx';
 
 export default function MySubscriptionsPage() {
+  const navigate = useNavigate();
   const [myCourses, setMyCourses] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
+  const [isUnsubscribing, setIsUnsubscribing] = useState(false);
 
   const fetchCourses = () => {
     setLoading(true);
@@ -32,32 +37,45 @@ export default function MySubscriptionsPage() {
     fetchCourses();
   }, []);
 
-  // --- NEW BREADCRUMB DATA ---
-  const breadcrumbs = [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'My Courses' }, // Current page
-  ];
-  // ----------------------------
-
   const handleUnsubscribe = async (courseId) => {
-    if (window.confirm('Are you sure you want to unsubscribe?')) {
-      try {
-        await unsubscribeFromCourse(courseId);
-        alert('Unsubscribed!');
-        fetchCourses(); // Re-fetch data
-      } catch (error) {
-        alert('Failed to unsubscribe.');
-      }
+    setSelectedCourseId(courseId);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmUnsubscribe = async () => {
+    if (!selectedCourseId) return;
+    
+    setShowConfirmModal(false);
+    setIsUnsubscribing(true);
+    try {
+      await unsubscribeFromCourse(selectedCourseId);
+      fetchCourses(); // Re-fetch data
+    } catch (error) {
+      console.error('Unsubscribe error:', error);
+      alert('Failed to unsubscribe.');
+    } finally {
+      setIsUnsubscribing(false);
+      setSelectedCourseId(null);
     }
+  };
+
+  const handleCancelUnsubscribe = () => {
+    setShowConfirmModal(false);
+    setSelectedCourseId(null);
   };
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      {/* --- ADD BREADCRUMBS HERE --- */}
-      <div className="mb-6">
-        <Breadcrumbs crumbs={breadcrumbs} />
-      </div>
-      {/* ----------------------------- */}
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-6 flex items-center gap-2 text-primary hover:text-orange-600 font-medium transition-colors"
+      >
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Back
+      </button>
 
       <h1 className="mb-8 text-3xl font-bold">My Courses</h1>
       {error && (
@@ -70,38 +88,38 @@ export default function MySubscriptionsPage() {
       ) : myCourses.length === 0 ? (
         <div className="py-8 text-center text-gray-600">You haven't subscribed to any courses yet.</div>
       ) : (
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-6">
-          {myCourses.map((course) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              linkTo={`/course/${course.id}`}
+        <CourseCarousel
+          courses={myCourses}
+          renderButton={(course) => (
+            <button
+              onClick={() => handleUnsubscribe(course.id)}
+              disabled={isUnsubscribing && selectedCourseId === course.id}
+              className="w-full rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors disabled:opacity-50"
             >
-              <button
-                onClick={() => handleUnsubscribe(course.id)}
-                className="w-full rounded-md border border-gray-300 py-1.5 text-sm font-medium hover:bg-gray-100"
-              >
-                Unsubscribe
-              </button>
-            </CourseCard>
-          ))}
-        </div>
+              {isUnsubscribing && selectedCourseId === course.id ? 'Processing...' : 'Unsubscribe'}
+            </button>
+          )}
+        />
       )}
 
       <h2 className="mb-8 mt-16 text-3xl font-bold">Suggestions..</h2>
       {suggestions.length === 0 ? (
         <div className="py-8 text-center text-gray-600">No suggestions available.</div>
       ) : (
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-4 lg:grid-cols-6">
-          {suggestions.map((course) => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              linkTo={`/course/${course.id}`}
-            />
-          ))}
-        </div>
+        <CourseCarousel courses={suggestions} />
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showConfirmModal}
+        title="Unsubscribe from Course?"
+        message="Are you sure you want to unsubscribe from this course?"
+        confirmText="Unsubscribe"
+        cancelText="Cancel"
+        onConfirm={handleConfirmUnsubscribe}
+        onCancel={handleCancelUnsubscribe}
+        confirmButtonClass="bg-red-600 hover:bg-red-700"
+      />
     </div>
   );
 }

@@ -1,26 +1,53 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   getAllUsers,
   promoteUser,
   demoteUser,
 } from '../../services/apiService.js'; // <-- Fixed path
-import Breadcrumbs from '../../components/common/BreadCrumps.jsx'; // <-- NEW IMPORT
 
 export default function AdminManageUsersPage() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [error, setError] = useState('');
-
-  // --- NEW BREADCRUMB DATA ---
-  const breadcrumbs = [
-    { name: 'Admin Dashboard', path: '/admin/dashboard' },
-    { name: 'Manage Users' }, // Current page
-  ];
-  // ----------------------------
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchUsers = () => {
     getAllUsers()
-      .then((res) => setUsers(res.data))
+      .then((res) => {
+        setUsers(res.data);
+        setFilteredUsers(res.data);
+      })
       .catch(() => setError('Failed to fetch users.'));
+  };
+
+  // Handle search from header
+  useEffect(() => {
+    const handleSearch = (event) => {
+      const query = event.detail;
+      setSearchQuery(query);
+      filterUsers(query);
+    };
+
+    window.addEventListener('searchUsers', handleSearch);
+    return () => window.removeEventListener('searchUsers', handleSearch);
+  }, [users]);
+
+  // Filter users based on search query
+  const filterUsers = (query) => {
+    if (!query.trim()) {
+      setFilteredUsers(users);
+      return;
+    }
+
+    const lowerQuery = query.toLowerCase();
+    const filtered = users.filter(
+      (user) =>
+        user.fullName.toLowerCase().includes(lowerQuery) ||
+        user.email.toLowerCase().includes(lowerQuery)
+    );
+    setFilteredUsers(filtered);
   };
 
   useEffect(fetchUsers, []);
@@ -45,14 +72,38 @@ export default function AdminManageUsersPage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      {/* --- ADD BREADCRUMBS HERE --- */}
-      <div className="mb-6">
-        <Breadcrumbs crumbs={breadcrumbs} />
-      </div>
-      {/* ----------------------------- */}
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-6 flex items-center gap-2 text-primary hover:text-orange-600 font-medium transition-colors"
+      >
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Back
+      </button>
 
       <h1 className="mb-8 text-3xl font-bold">Manage Users</h1>
       {error && <p className="text-red-500">{error}</p>}
+      
+      {/* Search Results Info */}
+      {searchQuery && (
+        <div className="mb-6 flex items-center justify-between">
+          <p className="text-sm text-gray-600">
+            Found {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''} matching "{searchQuery}"
+          </p>
+          <button
+            onClick={() => {
+              setSearchQuery('');
+              setFilteredUsers(users);
+            }}
+            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100"
+          >
+            Clear Search
+          </button>
+        </div>
+      )}
+
       <div className="overflow-x-auto rounded-lg border">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -72,8 +123,15 @@ export default function AdminManageUsersPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {users.map((user) => (
-              <tr key={user.id}>
+            {filteredUsers.length === 0 ? (
+              <tr>
+                <td colSpan="4" className="px-6 py-4 text-center text-gray-600">
+                  {searchQuery ? 'No users found matching your search.' : 'No users available.'}
+                </td>
+              </tr>
+            ) : (
+              filteredUsers.map((user) => (
+                <tr key={user.id}>
                 <td className="px-6 py-4 font-medium text-gray-900">
                   {user.fullName}
                 </td>
@@ -113,7 +171,8 @@ export default function AdminManageUsersPage() {
                   )}
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
       </div>

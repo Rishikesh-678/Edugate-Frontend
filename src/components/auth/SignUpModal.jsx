@@ -60,7 +60,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }) {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
@@ -76,7 +76,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
@@ -92,7 +92,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
@@ -107,7 +107,7 @@ export default function SignUpModal({ isOpen, onClose, onSwitchToLogin }) {
               id="signup-phone"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
             />
           </div>
           <button

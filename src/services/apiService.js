@@ -111,7 +111,7 @@ export default api;
 // You can also export specific functions for each endpoint
 
 // --- Public / User ---
-export const getLiveCourses = () => api.get('/user/courses');
+export const getLiveCourses = () => api.get('/public/courses');
 export const getMySubscriptions = () => api.get('/user/courses/my-subscriptions');
 export const subscribeToCourse = (courseId) =>
   api.post(`/user/courses/subscribe/${courseId}`);

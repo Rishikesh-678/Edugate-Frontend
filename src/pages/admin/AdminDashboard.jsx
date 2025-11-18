@@ -39,13 +39,22 @@ export default function AdminDashboard() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <h1 className="mb-8 text-3xl font-bold">
-        Welcome Admin {user?.fullName} 👋
-      </h1>
-
-      {/* Placeholder for Banner */}
-      <div className="mb-16 h-48 rounded-lg bg-gray-200 p-8">
-        Admin Dashboard Banner
+      {/* Banner with Background Image */}
+      <div
+        className="mb-16 overflow-hidden rounded-lg bg-cover bg-center bg-no-repeat relative h-80 bg-gradient-to-r from-red-500 to-red-600"
+        style={{
+          backgroundImage:
+            'url("/banners/admin-dashboard-banner.jpg")',
+        }}
+      >
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center justify-between h-full p-8 md:flex-row md:p-12">
+          <div>
+            <h1 className="text-3xl font-bold text-white">
+              Welcome {user?.fullName || 'Admin'} 👋
+            </h1>
+          </div>
+        </div>
       </div>
 
       <h2 className="mb-8 text-3xl font-bold">Pending Requests..</h2>
@@ -98,13 +107,13 @@ export default function AdminDashboard() {
                 <td className="space-x-2 px-6 py-4 text-right">
                   <button
                     onClick={() => handleApprove(course.id)}
-                    className="font-medium text-green-600 hover:text-green-800"
+                    className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
                   >
                     Approve
                   </button>
                   <button
                     onClick={() => handleReject(course.id)}
-                    className="font-medium text-red-600 hover:text-red-800"
+                    className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 transition-colors"
                   >
                     Reject
                   </button>

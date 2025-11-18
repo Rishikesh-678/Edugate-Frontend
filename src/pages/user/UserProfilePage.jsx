@@ -1,16 +1,21 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { getMyProfile, updateMyProfile, getLiveCourses } from '../../services/apiService.js';
-import Breadcrumbs from '../../components/common/BreadCrumps.jsx';
+import api from '../../services/apiService.js';
 import CourseCard from '../../components/common/CourseCard.jsx';
 
 export default function UserProfilePage() {
-  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [fullName, setFullName] = useState(user?.fullName || '');
   const [email, setEmail] = useState(user?.email || '');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [message, setMessage] = useState('');
   const [suggestions, setSuggestions] = useState([]);
+  const [adminLogs, setAdminLogs] = useState([]);
+  const [adminLogsPage, setAdminLogsPage] = useState(0);
+  const [adminLogsTotalPages, setAdminLogsTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const fetchSuggestions = () => {
@@ -21,26 +26,36 @@ export default function UserProfilePage() {
         })
         .catch((err) => console.error('Failed to fetch suggestions:', err));
     }
+    if (user?.role === 'ROLE_ADMIN') {
+      api.get(`/admin/logs/me?page=${adminLogsPage}&size=10`)
+        .then((res) => {
+          // Handle nested response structure
+          const responseData = res.data?.data || res.data;
+          const logsData = responseData?.content || responseData?.data || [];
+          
+          // Get totalPages from the correct location
+          let totalPages = responseData?.totalPages;
+          if (!totalPages) {
+            const totalElements = responseData?.totalElements || 0;
+            totalPages = Math.ceil(totalElements / 10) || 1;
+          }
+          
+          console.log('Admin logs response:', responseData);
+          console.log('Total pages from response:', totalPages, 'Total elements:', responseData?.totalElements);
+          
+          setAdminLogs(Array.isArray(logsData) ? logsData : []);
+          setAdminLogsTotalPages(Math.max(totalPages, 1));
+        })
+        .catch((err) => {
+          console.error('Failed to fetch admin logs:', err);
+          setAdminLogs([]);
+          setAdminLogsTotalPages(1);
+        });
+    }
     setLoading(false);
   };
 
-  // --- NEW BREADCRUMB DATA (Dynamic based on role) ---
-  const getDashboardPath = () => {
-    switch (user?.role) {
-      case 'ROLE_ADMIN':
-        return { name: 'Admin Dashboard', path: '/admin/dashboard' };
-      case 'ROLE_INSTRUCTOR':
-        return { name: 'Instructor Dashboard', path: '/instructor/dashboard' };
-      default:
-        return { name: 'Dashboard', path: '/dashboard' };
-    }
-  };
 
-  const breadcrumbs = [
-    getDashboardPath(),
-    { name: 'Public Profile' }, // Current page
-  ];
-  // ----------------------------------------------------
 
   useEffect(() => {
     // Fetch full profile details
@@ -54,7 +69,7 @@ export default function UserProfilePage() {
         console.error('Failed to fetch profile', err);
         setLoading(false);
       });
-  }, [user?.role]);
+  }, [user?.role, adminLogsPage]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,25 +86,24 @@ export default function UserProfilePage() {
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      {/* --- ADD BREADCRUMBS HERE --- */}
-      <div className="mb-6">
-        <Breadcrumbs crumbs={breadcrumbs} />
-      </div>
-      {/* ----------------------------- */}
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-6 flex items-center gap-2 text-primary hover:text-orange-600 font-medium transition-colors"
+      >
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Back
+      </button>
 
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6">
         <h1 className="text-3xl font-bold">Public Profile</h1>
-        <button
-          onClick={logout}
-          className="rounded-md bg-red-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-red-700"
-        >
-          Log Out
-        </button>
       </div>
 
       <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4 md:col-span-2">
+        <form onSubmit={handleSubmit} className="space-y-6 md:col-span-2">
           {message && (
             <p className="rounded-md bg-green-100 p-3 text-sm text-green-700">
               {message}
@@ -98,7 +112,7 @@ export default function UserProfilePage() {
           <div>
             <label
               htmlFor="fullName"
-              className="block text-lg font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Full Name
             </label>
@@ -107,13 +121,13 @@ export default function UserProfilePage() {
               id="fullName"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
             />
           </div>
           <div>
             <label
               htmlFor="email"
-              className="block text-lg font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Email
             </label>
@@ -123,13 +137,13 @@ export default function UserProfilePage() {
               value={email}
               disabled
               readOnly
-              className="mt-1 block w-full rounded-md border-gray-300 bg-gray-200 px-3 py-2 text-gray-500 shadow-sm"
+              className="block w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-gray-500 shadow-sm"
             />
           </div>
           <div>
             <label
               htmlFor="phoneNumber"
-              className="block text-lg font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-700 mb-2"
             >
               Phone Number
             </label>
@@ -138,7 +152,7 @@ export default function UserProfilePage() {
               id="phoneNumber"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 px-3 py-2 shadow-sm focus:border-primary focus:ring-primary"
+              className="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-primary focus:ring-2 focus:ring-primary"
             />
           </div>
           <button
@@ -152,7 +166,7 @@ export default function UserProfilePage() {
         {/* Avatar */}
         <div className="flex items-start justify-center">
           <div className="flex h-48 w-48 items-center justify-center rounded-full bg-pink-600 text-8xl font-medium text-white">
-            {user?.fullName.charAt(0).toUpperCase()}
+            {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
           </div>
         </div>
       </div>
@@ -183,10 +197,71 @@ export default function UserProfilePage() {
       {user?.role === 'ROLE_INSTRUCTOR' && (
         <h2 className="mb-8 mt-16 text-3xl font-bold">Most Subscribed..</h2>
       )}
+      
+      {/* Admin Logs Section */}
       {user?.role === 'ROLE_ADMIN' && (
-        <h2 className="mb-8 mt-16 text-3xl font-bold">
-          Recently Viewed Requests..
-        </h2>
+        <div className="mt-16">
+          <h2 className="mb-8 text-3xl font-bold">Recently Viewed Requests..</h2>
+          {!loading && (!adminLogs || adminLogs.length === 0) ? (
+            <div className="py-8 text-center text-gray-600">No admin activities yet.</div>
+          ) : (
+            <>
+              <div className="overflow-x-auto rounded-lg border border-gray-200 mb-6">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Action</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Type</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Details</th>
+                      <th className="px-6 py-3 text-left text-sm font-semibold text-gray-700">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {Array.isArray(adminLogs) && adminLogs.map((log, index) => (
+                      <tr key={index} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 text-sm text-gray-900">
+                          <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-800">
+                            {log.action?.replace(/_/g, ' ') || 'N/A'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-700">
+                          <span className="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-800">
+                            {log.targetType || 'N/A'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-700">{log.details || `ID: ${log.targetId}`}</td>
+                        <td className="px-6 py-4 text-sm text-gray-500">
+                          {log.createdAt ? new Date(log.createdAt).toLocaleDateString() : 'N/A'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Pagination Controls */}
+              <div className="mt-4 flex items-center justify-center gap-4">
+                <button
+                  onClick={() => setAdminLogsPage(Math.max(0, adminLogsPage - 1))}
+                  disabled={adminLogsPage === 0}
+                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  Previous
+                </button>
+                <div className="text-sm font-medium text-gray-700 min-w-[120px] text-center">
+                  Page {adminLogsPage + 1} of {Math.max(1, adminLogsTotalPages)}
+                </div>
+                <button
+                  onClick={() => setAdminLogsPage(adminLogsPage + 1)}
+                  disabled={adminLogsPage >= Math.max(1, adminLogsTotalPages) - 1}
+                  className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
+        </div>
       )}
     </div>
   );

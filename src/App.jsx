@@ -17,7 +17,9 @@ import UserProfilePage from './pages/user/UserProfilePage.jsx';
 
 // Instructor Pages
 import InstructorDashboard from './pages/instructor/InstructorDashboard.jsx';
+import InstructorProfilePage from './pages/instructor/InstructorProfilePage.jsx';
 import AddCoursePage from './pages/instructor/AddCoursePage.jsx';
+import EditCoursePage from './pages/instructor/EditCoursePage.jsx';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
@@ -37,26 +39,28 @@ function App() {
     );
   }
 
-  // Redirect logic after login
-  const getHomeRoute = () => {
-    if (!user) return <PublicLandingPage />;
-    switch (user.role) {
-      case 'ROLE_ADMIN':
-        return <Navigate to="/admin/dashboard" replace />;
-      case 'ROLE_INSTRUCTOR':
-        return <Navigate to="/instructor/dashboard" replace />;
-      case 'ROLE_USER':
-        return <Navigate to="/dashboard" replace />;
-      default:
-        return <PublicLandingPage />;
-    }
-  };
-
   return (
     <Routes>
       <Route element={<MainLayout />}>
         {/* --- Public Routes --- */}
-        <Route path="/" element={getHomeRoute()} />
+        <Route 
+          path="/" 
+          element={
+            user ? (
+              user.role === 'ROLE_ADMIN' ? (
+                <Navigate to="/admin/dashboard" replace />
+              ) : user.role === 'ROLE_INSTRUCTOR' ? (
+                <Navigate to="/instructor/dashboard" replace />
+              ) : user.role === 'ROLE_USER' ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <PublicLandingPage />
+              )
+            ) : (
+              <PublicLandingPage />
+            )
+          } 
+        />
         <Route path="/course/:id" element={<CourseDetailPage />} />
 
         {/* --- User Routes --- */}
@@ -68,7 +72,9 @@ function App() {
         {/* --- Instructor Routes --- */}
         <Route element={<ProtectedRoute allowedRoles={['ROLE_INSTRUCTOR']} />}>
           <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
+          <Route path="/instructor/profile" element={<InstructorProfilePage />} />
           <Route path="/instructor/add-course" element={<AddCoursePage />} />
+          <Route path="/instructor/edit-course/:courseId" element={<EditCoursePage />} />
         </Route>
 
         {/* --- Admin Routes --- */}

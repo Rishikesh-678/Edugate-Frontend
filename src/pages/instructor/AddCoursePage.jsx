@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { addCourse } from '../../services/apiService.js'; // <-- Fixed path
-import Breadcrumbs from '../../components/common/BreadCrumps.jsx'; // <-- NEW IMPORT
 
 export default function AddCoursePage() {
   const [courseName, setCourseName] = useState('');
@@ -13,12 +12,7 @@ export default function AddCoursePage() {
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  // --- NEW BREADCRUMB DATA ---
-  const breadcrumbs = [
-    { name: 'Instructor Dashboard', path: '/instructor/dashboard' },
-    { name: 'Add Course' }, // Current page
-  ];
-  // ----------------------------
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -60,11 +54,16 @@ export default function AddCoursePage() {
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
-      {/* --- ADD BREADCRUMBS HERE --- */}
-      <div className="mb-6">
-        <Breadcrumbs crumbs={breadcrumbs} />
-      </div>
-      {/* ----------------------------- */}
+      {/* Back Button */}
+      <button
+        onClick={() => navigate(-1)}
+        className="mb-6 flex items-center gap-2 text-primary hover:text-orange-600 font-medium transition-colors"
+      >
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+        Back
+      </button>
 
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Add Course</h1>
