@@ -51,8 +51,8 @@ export default function Header() {
     return 'Search courses...';
   };
 
-  // Hide search bar on profile pages, course detail page, add course, my courses, and public landing page
-  const showSearchBar = location.pathname !== '/' && location.pathname !== '/profile' && location.pathname !== '/instructor/profile' && !location.pathname.startsWith('/course/') && location.pathname !== '/instructor/add-course' && location.pathname !== '/my-courses' && !location.pathname.startsWith('/instructor/edit-course/');
+  // Hide search bar on profile pages, course detail page, add course, my courses, admin dashboard, and public landing page
+  const showSearchBar = location.pathname !== '/' && location.pathname !== '/profile' && location.pathname !== '/instructor/profile' && location.pathname !== '/admin/dashboard' && !location.pathname.startsWith('/course/') && location.pathname !== '/instructor/add-course' && location.pathname !== '/my-courses' && !location.pathname.startsWith('/instructor/edit-course/');
 
   return (
     <>
@@ -71,6 +71,7 @@ export default function Header() {
                   placeholder={getSearchPlaceholder()}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label={getSearchPlaceholder()}
                   className="w-full rounded-md border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               </form>
@@ -109,7 +110,8 @@ export default function Header() {
                 {/* Profile/Logout */}
                 <Link
                   to={user.role === 'ROLE_INSTRUCTOR' ? '/instructor/profile' : '/profile'}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-pink-600 text-sm font-medium text-white hover:bg-pink-700 transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-pink-600 text-sm font-medium text-white hover:bg-pink-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+                  aria-label={`Go to ${user.role === 'ROLE_INSTRUCTOR' ? 'instructor' : 'user'} profile`}
                 >
                   {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
                 </Link>

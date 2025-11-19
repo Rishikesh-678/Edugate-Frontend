@@ -172,7 +172,7 @@ export default function UserProfilePage() {
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="rounded-md bg-primary px-6 py-2 font-semibold text-black hover:bg-primary-dark"
+                className="btn-primary"
               >
                 Update Profile
               </button>
@@ -280,7 +280,7 @@ export default function UserProfilePage() {
                       setAdminLogsPage(Math.max(0, adminLogsPage - 1))
                     }
                     disabled={adminLogsPage === 0}
-                    className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                    className="btn-pagination"
                   >
                     Previous
                   </button>
@@ -293,7 +293,7 @@ export default function UserProfilePage() {
                     disabled={
                       adminLogsPage >= Math.max(1, adminLogsTotalPages) - 1
                     }
-                    className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                    className="btn-pagination"
                   >
                     Next
                   </button>

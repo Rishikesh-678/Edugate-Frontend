@@ -77,12 +77,12 @@ export default function AddCoursePage() {
       </div>
 
       {message && (
-        <p className="mb-4 rounded-md bg-green-100 p-3 text-center text-sm text-green-700">
+        <p className="mb-4 rounded-md bg-green-100 p-3 text-center text-sm text-green-700" role="status" aria-live="polite">
           {message}
         </p>
       )}
       {error && (
-        <p className="mb-4 rounded-md bg-red-100 p-3 text-center text-sm text-red-700">
+        <p className="mb-4 rounded-md bg-red-100 p-3 text-center text-sm text-red-700" role="alert" aria-live="assertive">
           {error}
         </p>
       )}
@@ -167,12 +167,15 @@ export default function AddCoursePage() {
             onChange={(e) => setThumbnail(e.target.files[0])}
             required
             className="mt-1 block w-full text-sm text-gray-500 transition-all duration-300
-              file:mr-4 file:rounded-full file:border-0
-              file:bg-primary/20 file:px-4 file:py-2
-              file:text-sm file:font-semibold file:text-primary
+              file:mr-4 file:rounded-md file:border-0
+              file:bg-primary file:px-4 file:py-2
+              file:text-sm file:font-semibold file:text-black
               file:transition-all file:duration-300
-              hover:file:bg-primary/30 hover:file:scale-105
-              focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-30"
+              file:cursor-pointer
+              hover:file:bg-primary-dark
+              border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm rounded-lg
+              hover:bg-white hover:border-primary hover:shadow-md
+              focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
           />
         </div>
       </form>

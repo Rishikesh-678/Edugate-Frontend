@@ -63,7 +63,7 @@ export default function CourseDetailPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-12 text-center">
+      <div className="container mx-auto max-w-4xl px-4 py-12 text-center" role="status" aria-live="polite" aria-busy="true">
         <p className="text-gray-600">Loading course details...</p>
       </div>
     );
@@ -71,7 +71,7 @@ export default function CourseDetailPage() {
 
   if (!course) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-12 text-center">
+      <div className="container mx-auto max-w-4xl px-4 py-12 text-center" role="status" aria-live="assertive">
         <p className="text-red-600">{error || 'Course not found.'}</p>
       </div>
     );
@@ -203,13 +203,13 @@ export default function CourseDetailPage() {
                   <button
                     onClick={handleRemoveCourse}
                     disabled={isRemoving}
-                    className="w-full rounded-lg border border-red-400 px-6 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
+                    className="w-full btn-danger-secondary disabled:opacity-50"
                   >
                     {isRemoving ? 'Removing...' : 'Remove Course'}
                   </button>
                   <button
                     onClick={() => navigate(`/instructor/edit-course/${course.id}`)}
-                    className="w-full rounded-lg border border-blue-400 px-6 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50"
+                    className="w-full btn-info-secondary"
                   >
                     Edit Course
                   </button>
@@ -221,7 +221,7 @@ export default function CourseDetailPage() {
                     <button
                       onClick={handleUnsubscribeClick}
                       disabled={isSubscribing}
-                      className="w-full rounded-lg border border-red-400 px-6 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
+                      className="w-full btn-danger-secondary disabled:opacity-50"
                     >
                       {isSubscribing ? 'Processing...' : 'Unsubscribe'}
                     </button>
@@ -229,7 +229,7 @@ export default function CourseDetailPage() {
                     <button
                       onClick={handleSubscribeClick}
                       disabled={isSubscribing}
-                      className="w-full rounded-lg border border-gray-400 px-6 py-2.5 text-sm font-semibold transition hover:bg-gray-100 disabled:opacity-50"
+                      className="w-full btn-secondary disabled:opacity-50"
                     >
                       {isSubscribing ? 'Processing...' : 'Subscribe'}
                     </button>

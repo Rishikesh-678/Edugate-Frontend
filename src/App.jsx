@@ -30,9 +30,9 @@ function App() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-100">
+      <div className="flex h-screen items-center justify-center bg-gray-100" role="status" aria-live="polite" aria-busy="true">
         <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-primary mx-auto"></div>
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-primary mx-auto" aria-hidden="true"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>

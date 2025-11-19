@@ -12,33 +12,112 @@ body {
   @apply bg-white text-secondary;
 }
 
-/* Typing area effects */
-@keyframes inputFocus {
-  from {
-    box-shadow: 0 0 0 0 rgba(251, 146, 60, 0.4);
-  }
-  to {
-    box-shadow: 0 0 0 8px rgba(251, 146, 60, 0);
-  }
-}
-
-@keyframes smoothBorderGlow {
-  0% {
-    border-color: rgb(209, 213, 219);
-  }
-  50% {
-    border-color: rgb(251, 146, 60);
-  }
-  100% {
-    border-color: rgb(251, 146, 60);
-  }
-}
-
+/* ========== REUSABLE INPUT FIELD CLASSES ========== */
 .input-field-typing {
   @apply block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm transition-all duration-300;
 }
 
+.input-field-typing:hover {
+  @apply bg-gray-50 border-primary shadow-md;
+}
+
 .input-field-typing:focus {
-  @apply border-primary focus:ring-2 focus:ring-primary outline-none;
-  animation: inputFocus 0.6s ease-out;
+  @apply border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 outline-none bg-white;
+}
+
+/* Standard input field with Tailwind styling */
+.input-field {
+  @apply block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm transition-all duration-300;
+}
+
+.input-field:hover {
+  @apply bg-gray-50 border-primary shadow-md;
+}
+
+.input-field:focus {
+  @apply border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20 outline-none;
+}
+
+/* Modal input field with enhanced styling */
+.input-field-modal {
+  @apply w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-900 placeholder-gray-400 transition-all duration-300;
+}
+
+.input-field-modal:hover {
+  @apply bg-gray-50 border-primary shadow-md;
+}
+
+.input-field-modal:focus {
+  @apply outline-none border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20;
+}
+
+/* Disabled input field */
+.input-field-disabled {
+  @apply block w-full rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-gray-500 shadow-sm cursor-not-allowed;
+}
+
+/* ========== REUSABLE BUTTON CLASSES ========== */
+/* Primary button */
+.btn-primary {
+  @apply rounded-md bg-primary px-6 py-2 font-semibold text-black hover:bg-primary-dark transition-colors;
+}
+
+/* Secondary button */
+.btn-secondary {
+  @apply rounded-md border border-gray-300 px-6 py-2 font-semibold text-gray-700 hover:bg-gray-100 transition-colors;
+}
+
+/* Danger button */
+.btn-danger {
+  @apply rounded-md bg-red-600 px-6 py-2 font-semibold text-white hover:bg-red-700 transition-colors;
+}
+
+/* Success button */
+.btn-success {
+  @apply rounded-md bg-green-600 px-6 py-2 font-semibold text-white hover:bg-green-700 transition-colors;
+}
+
+/* Small button */
+.btn-sm {
+  @apply rounded-md bg-primary px-4 py-1.5 text-sm font-semibold text-black hover:bg-primary-dark transition-colors;
+}
+
+/* Pagination button */
+.btn-pagination {
+  @apply rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition;
+}
+
+/* Danger secondary button (red outline) */
+.btn-danger-secondary {
+  @apply rounded-lg border border-red-400 px-6 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50;
+}
+
+/* Success secondary button (green outline) */
+.btn-success-secondary {
+  @apply rounded-lg border border-green-400 px-6 py-2.5 text-sm font-semibold text-green-600 transition hover:bg-green-50;
+}
+
+/* Info secondary button (blue outline) */
+.btn-info-secondary {
+  @apply rounded-lg border border-blue-400 px-6 py-2.5 text-sm font-semibold text-blue-600 transition hover:bg-blue-50;
+}
+
+/* Modal button with scale effect */
+.btn-modal {
+  @apply w-full rounded-lg bg-primary py-3 font-semibold text-black hover:bg-primary-dark transition-all duration-200 transform hover:scale-[1.02] active:scale-95 shadow-md;
+}
+
+/* ========== ACCESSIBILITY UTILITIES ========== */
+/* Visible focus indicator for keyboard navigation */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  @apply outline-2 outline-offset-2 outline-primary;
+}
+
+/* Skip navigation link (hidden by default, visible on focus) */
+.skip-link {
+  @apply absolute left-0 top-0 bg-primary px-4 py-2 text-black font-semibold -translate-y-full focus:translate-y-0 transition-transform;
 }

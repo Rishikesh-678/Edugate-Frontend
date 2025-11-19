@@ -135,7 +135,7 @@ export default function InstructorProfilePage() {
           <div className="flex gap-4">
             <button
               type="submit"
-              className="rounded-md bg-primary px-6 py-2 font-semibold text-black hover:bg-primary-dark"
+              className="btn-primary"
             >
               Update Profile
             </button>

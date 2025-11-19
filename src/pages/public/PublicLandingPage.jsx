@@ -99,7 +99,7 @@ export default function PublicLandingPage() {
         <div className="flex justify-center">
           <img
             src="/images/about-us.jpg"
-            alt="About Us"
+            alt="EduGate platform connecting learners with instructors worldwide"
             className="h-auto w-full max-w-xs opacity-90"
           />
         </div>
