@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import {
   getPendingCourses,
-  approveCourse,
-  rejectCourse,
 } from '../../services/apiService';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminDashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [pending, setPending] = useState([]);
   const [error, setError] = useState('');
 
@@ -18,24 +18,6 @@ export default function AdminDashboard() {
   };
 
   useEffect(fetchPending, []);
-
-  const handleApprove = async (id) => {
-    try {
-      await approveCourse(id);
-      fetchPending(); // Refresh list
-    } catch (err) {
-      alert('Failed to approve.');
-    }
-  };
-
-  const handleReject = async (id) => {
-    try {
-      await rejectCourse(id);
-      fetchPending(); // Refresh list
-    } catch (err) {
-      alert('Failed to reject.');
-    }
-  };
 
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
@@ -75,7 +57,7 @@ export default function AdminDashboard() {
                 Status
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium uppercase text-gray-500">
-                Actions
+                Action
               </th>
             </tr>
           </thead>
@@ -108,16 +90,10 @@ export default function AdminDashboard() {
                 </td>
                 <td className="space-x-2 px-6 py-4 text-right">
                   <button
-                    onClick={() => handleApprove(course.id)}
-                    className="rounded-md bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+                    onClick={() => navigate(`/course/${course.id}`)}
+                    className="rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-black hover:bg-primary-dark transition-colors"
                   >
-                    Approve
-                  </button>
-                  <button
-                    onClick={() => handleReject(course.id)}
-                    className="rounded-md bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-                  >
-                    Reject
+                    Review
                   </button>
                 </td>
               </tr>
@@ -157,16 +133,10 @@ export default function AdminDashboard() {
               </div>
               <div className="flex flex-col gap-2 pt-3 border-t border-gray-200">
                 <button
-                  onClick={() => handleApprove(course.id)}
-                  className="w-full rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+                  onClick={() => navigate(`/course/${course.id}`)}
+                  className="w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-black hover:bg-primary-dark transition-colors"
                 >
-                  Approve
-                </button>
-                <button
-                  onClick={() => handleReject(course.id)}
-                  className="w-full rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
-                >
-                  Reject
+                  Review Course
                 </button>
               </div>
             </div>

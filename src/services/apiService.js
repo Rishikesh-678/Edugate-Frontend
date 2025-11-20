@@ -140,6 +140,8 @@ export const promoteUser = (userId) =>
 export const demoteUser = (userId) =>
   api.put(`/admin/users/demote/${userId}`);
 export const getPendingCourses = () => api.get('/admin/courses/pending');
+export const getPendingCourseDetails = (courseId) =>
+  api.get(`/admin/courses/pending/${courseId}`);
 export const approveCourse = (courseId) =>
   api.post(`/admin/courses/approve/${courseId}`);
 export const rejectCourse = (courseId) =>

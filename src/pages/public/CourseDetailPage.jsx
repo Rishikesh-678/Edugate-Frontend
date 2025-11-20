@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { subscribeToCourse, unsubscribeFromCourse } from '../../services/apiService.js';
+import { subscribeToCourse, unsubscribeFromCourse, approveCourse, rejectCourse } from '../../services/apiService.js';
 import api from '../../services/apiService.js';
 import ConfirmationModal from '../../components/common/ConfirmationModal.jsx';
 
@@ -18,36 +18,83 @@ export default function CourseDetailPage() {
   const [confirmAction, setConfirmAction] = useState('subscribe'); // 'subscribe' or 'unsubscribe'
   const [isOwner, setIsOwner] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isProcessingApproval, setIsProcessingApproval] = useState(false);
 
   useEffect(() => {
     setLoading(true);
     setError('');
     setIsOwner(false); // Reset ownership on each load
-    api
-      .get(`/public/courses/${id}`)
-      .then((res) => {
-        const courseData = res.data || res;
-        setCourse(courseData);
-        // Check if user is subscribed (backend should indicate this)
-        // For now, we'll check when we get user's subscriptions
-        if (user) {
-          checkSubscriptionStatus();
-          // Check if user is the course owner
-          if (user.role === 'ROLE_INSTRUCTOR' && courseData.createdById === user.id) {
-            setIsOwner(true);
+    const isAdminUser = user?.role === 'ROLE_ADMIN';
+    setIsAdmin(isAdminUser);
+
+    // If user is admin, fetch from pending courses detail endpoint
+    if (isAdminUser) {
+      api
+        .get(`/admin/courses/pending/${id}`)
+        .then((res) => {
+          const courseData = res.data || res;
+          console.log('Admin course data:', courseData);
+          setCourse(courseData);
+        })
+        .catch((err) => {
+          console.error('Failed to fetch admin course details:', err);
+          setError('Failed to load course. Please try again later.');
+        })
+        .finally(() => setLoading(false));
+    } else {
+      // For non-admin users, try to fetch from public courses first
+      api
+        .get(`/public/courses/${id}`)
+        .then((res) => {
+          const courseData = res.data || res;
+          console.log('Public course data:', courseData);
+          setCourse(courseData);
+          // Check if user is subscribed (backend should indicate this)
+          // For now, we'll check when we get user's subscriptions
+          if (user) {
+            checkSubscriptionStatus();
+            // Check if user is the course owner
+            if (user.role === 'ROLE_INSTRUCTOR' && courseData.createdById === user.id) {
+              setIsOwner(true);
+            } else {
+              setIsOwner(false);
+            }
           } else {
             setIsOwner(false);
           }
-        } else {
-          setIsOwner(false);
-        }
-      })
-      .catch((err) => {
-        console.error('Failed to fetch course:', err);
-        setError('Failed to load course. Please try again later.');
-        setIsOwner(false);
-      })
-      .finally(() => setLoading(false));
+        })
+        .catch((err) => {
+          // If public course fetch fails and user is instructor, try instructor's own courses
+          if (user?.role === 'ROLE_INSTRUCTOR') {
+            api
+              .get(`/instructor/courses/my-courses`)
+              .then((res) => {
+                const myCourses = res.data || res || [];
+                const foundCourse = myCourses.find((c) => c.id === parseInt(id));
+                if (foundCourse) {
+                  setCourse(foundCourse);
+                  setIsOwner(true);
+                } else {
+                  console.error('Course not found in instructor courses:', err);
+                  setError('Failed to load course. Please try again later.');
+                  setIsOwner(false);
+                }
+              })
+              .catch((instructorErr) => {
+                console.error('Failed to fetch course:', instructorErr);
+                setError('Failed to load course. Please try again later.');
+                setIsOwner(false);
+              })
+              .finally(() => setLoading(false));
+          } else {
+            console.error('Failed to fetch course:', err);
+            setError('Failed to load course. Please try again later.');
+            setLoading(false);
+          }
+        })
+        .finally(() => setLoading(false));
+    }
   }, [id, user]);
 
   const checkSubscriptionStatus = async () => {
@@ -139,6 +186,39 @@ export default function CourseDetailPage() {
     }
   };
 
+  const handleApproveClick = () => {
+    setConfirmAction('approve');
+    setShowConfirmModal(true);
+  };
+
+  const handleRejectClick = () => {
+    setConfirmAction('reject');
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmApproval = async () => {
+    setShowConfirmModal(false);
+    setIsProcessingApproval(true);
+    try {
+      if (confirmAction === 'approve') {
+        await approveCourse(course.id);
+        alert('Course approved successfully!');
+      } else {
+        await rejectCourse(course.id);
+        alert('Course rejected successfully!');
+      }
+      navigate('/admin/dashboard');
+    } catch (error) {
+      console.error('Approval error:', error);
+      alert(
+        `Failed to ${confirmAction} course: ` +
+          (error.response?.data?.message || error.message)
+      );
+    } finally {
+      setIsProcessingApproval(false);
+    }
+  };
+
   const getYoutubeEmbedUrl = (url) => {
     if (!url) return '';
     try {
@@ -157,7 +237,23 @@ export default function CourseDetailPage() {
     return url; // fallback
   };
 
-  const embedUrl = getYoutubeEmbedUrl(course.videoLink);
+  // Normalize course data to handle both approved and pending course structures
+  const normalizeCourseData = (courseData) => {
+    return {
+      id: courseData.id,
+      courseName: courseData.courseName || courseData.course_name || 'Unknown Course',
+      instructor: courseData.instructor || courseData.instructorName || courseData.instructor_name || 'Unknown Instructor',
+      category: courseData.category || courseData.course_category || courseData.courseCategory || 'Uncategorized',
+      thumbnailUrl: courseData.thumbnailUrl || courseData.thumbnail_url || courseData.thumbnailimage || '',
+      videoLink: courseData.videoLink || courseData.video_link || courseData.videourl || '',
+      creatorEmail: courseData.creatorEmail || courseData.creator_email || courseData.instructorEmail || '',
+      status: courseData.status || 'UNKNOWN',
+      createdById: courseData.createdById || courseData.created_by_id,
+    };
+  };
+
+  const normalizedCourse = course ? normalizeCourseData(course) : null;
+  const embedUrl = getYoutubeEmbedUrl(normalizedCourse?.videoLink);
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
@@ -172,56 +268,113 @@ export default function CourseDetailPage() {
         Back
       </button>
 
+      {/* Course Status Banner - Show for instructor who owns the course or admin reviewing */}
+      {(isOwner || isAdmin) && normalizedCourse?.status && normalizedCourse.status !== 'APPROVED' && (
+        <div className={`mb-6 rounded-md p-4 border ${
+          normalizedCourse.status === 'REJECTED'
+            ? 'bg-red-50 border-red-200'
+            : 'bg-yellow-50 border-yellow-200'
+        }`}>
+          <p className={`text-sm font-semibold ${
+            normalizedCourse.status === 'REJECTED'
+              ? 'text-red-800'
+              : 'text-yellow-800'
+          }`}>
+            Status: <span className="uppercase">{normalizedCourse.status === 'PENDING_ADDITION' ? 'Pending Approval' : normalizedCourse.status}</span>
+          </p>
+          <p className="text-xs mt-1 text-gray-600">
+            {isAdmin 
+              ? 'This course is pending your review. Please approve or reject it.' 
+              : normalizedCourse.status === 'PENDING_ADDITION' 
+              ? 'Your course is pending admin review. It will be visible to users once approved.' 
+              : 'Your course was rejected. Please review the feedback and update accordingly.'}
+          </p>
+        </div>
+      )}
+
       <div className="mb-8 flex flex-col justify-between gap-6 sm:gap-8 md:flex-row md:gap-12">
         {/* Course Info */}
         <div className="flex-1 md:mb-0">
-          <h1 className="mb-4 text-2xl sm:text-4xl font-bold leading-tight">{course.courseName}</h1>
+          <h1 className="mb-4 text-2xl sm:text-4xl font-bold leading-tight">{normalizedCourse.courseName}</h1>
           <div className="space-y-2 sm:space-y-3">
             <p className="text-sm sm:text-base text-gray-700">
-              <span className="font-semibold">Instructor:</span> <span className="text-gray-900">{course.instructor}</span>
+              <span className="font-semibold">Instructor:</span> <span className="text-gray-900">{normalizedCourse.instructor}</span>
             </p>
             <p className="text-sm sm:text-base text-gray-700">
-              <span className="font-semibold">Category:</span> <span className="text-gray-900">{course.category}</span>
+              <span className="font-semibold">Category:</span> <span className="text-gray-900">{normalizedCourse.category}</span>
             </p>
           </div>
         </div>
-        {/* Thumbnail & Subscribe Button */}
+        
+        {/* Thumbnail & Buttons Section */}
         <div className="flex flex-col items-center gap-3 sm:gap-4 md:w-56">
-          <img
-            src={course.thumbnailUrl}
-            alt={course.courseName}
-            className="w-full rounded-lg object-cover shadow-md"
-            onError={(e) =>
-              (e.target.src =
-                'https://placehold.co/200x150/F9A826/4A4A4A?text=EduGate')
-            }
-          />
+          {normalizedCourse.thumbnailUrl ? (
+            <img
+              src={normalizedCourse.thumbnailUrl}
+              alt={normalizedCourse.courseName}
+              className="w-full h-auto rounded-lg object-cover shadow-md"
+              onError={(e) =>
+                (e.target.src =
+                  'https://placehold.co/300x200/F9A826/4A4A4A?text=EduGate')
+              }
+            />
+          ) : (
+            <div className="w-full h-40 rounded-lg bg-gray-200 flex items-center justify-center">
+              <img
+                src="https://placehold.co/300x200/F9A826/4A4A4A?text=EduGate"
+                alt="Thumbnail placeholder"
+                className="w-full h-full rounded-lg object-cover"
+              />
+            </div>
+          )}
+          
+          {/* Action Buttons */}
           {user && (
             <div className="w-full space-y-2">
-              {isOwner && (
+              {isAdmin && !isOwner && (
                 <>
                   <button
-                    onClick={handleRemoveCourse}
-                    disabled={isRemoving}
-                    className="w-full btn-danger-secondary disabled:opacity-50 text-xs sm:text-sm"
+                    onClick={handleApproveClick}
+                    disabled={isProcessingApproval}
+                    className="w-full rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors disabled:opacity-50"
                   >
-                    {isRemoving ? 'Removing...' : 'Remove Course'}
+                    {isProcessingApproval ? 'Processing...' : '✓ Approve'}
                   </button>
                   <button
-                    onClick={() => navigate(`/instructor/edit-course/${course.id}`)}
-                    className="w-full btn-info-secondary text-xs sm:text-sm"
+                    onClick={handleRejectClick}
+                    disabled={isProcessingApproval}
+                    className="w-full rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors disabled:opacity-50"
                   >
-                    Edit Course
+                    {isProcessingApproval ? 'Processing...' : '✕ Reject'}
                   </button>
                 </>
               )}
-              {!isOwner && (
+              
+              {isOwner && (
+                <>
+                  <button
+                    onClick={() => navigate(`/instructor/edit-course/${course.id}`)}
+                    className="w-full btn-info-secondary text-sm"
+                  >
+                    ✎ Edit Course
+                  </button>
+                  <button
+                    onClick={handleRemoveCourse}
+                    disabled={isRemoving}
+                    className="w-full btn-danger-secondary disabled:opacity-50 text-sm"
+                  >
+                    {isRemoving ? 'Removing...' : '🗑 Remove Course'}
+                  </button>
+                </>
+              )}
+              
+              {!isOwner && !isAdmin && (
                 <>
                   {isSubscribed ? (
                     <button
                       onClick={handleUnsubscribeClick}
                       disabled={isSubscribing}
-                      className="w-full btn-danger-secondary disabled:opacity-50 text-xs sm:text-sm"
+                      className="w-full btn-danger-secondary disabled:opacity-50 text-sm"
                     >
                       {isSubscribing ? 'Processing...' : 'Unsubscribe'}
                     </button>
@@ -229,7 +382,7 @@ export default function CourseDetailPage() {
                     <button
                       onClick={handleSubscribeClick}
                       disabled={isSubscribing}
-                      className="w-full btn-secondary disabled:opacity-50 text-xs sm:text-sm"
+                      className="w-full btn-secondary disabled:opacity-50 text-sm"
                     >
                       {isSubscribing ? 'Processing...' : 'Subscribe'}
                     </button>
@@ -257,7 +410,7 @@ export default function CourseDetailPage() {
               width="100%"
               height="100%"
               src={embedUrl}
-              title={`Course video: ${course.courseName}`}
+              title={`Course video: ${normalizedCourse.courseName}`}
               frameBorder="0"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -278,30 +431,48 @@ export default function CourseDetailPage() {
             ? 'Subscribe to Course?'
             : confirmAction === 'remove'
             ? 'Remove Course?'
+            : confirmAction === 'approve'
+            ? 'Approve Course?'
+            : confirmAction === 'reject'
+            ? 'Reject Course?'
             : 'Unsubscribe from Course?'
         }
         message={
           confirmAction === 'subscribe'
-            ? `Are you sure you want to subscribe to "${course.courseName}"?`
+            ? `Are you sure you want to subscribe to "${normalizedCourse.courseName}"?`
             : confirmAction === 'remove'
-            ? `Are you sure you want to remove "${course.courseName}"? This action cannot be undone.`
-            : `Are you sure you want to unsubscribe from "${course.courseName}"?`
+            ? `Are you sure you want to remove "${normalizedCourse.courseName}"? This action cannot be undone.`
+            : confirmAction === 'approve'
+            ? `Are you sure you want to approve "${normalizedCourse.courseName}"? It will become visible to users.`
+            : confirmAction === 'reject'
+            ? `Are you sure you want to reject "${normalizedCourse.courseName}"?`
+            : `Are you sure you want to unsubscribe from "${normalizedCourse.courseName}"?`
         }
         confirmText={
           confirmAction === 'subscribe'
             ? 'Subscribe'
             : confirmAction === 'remove'
             ? 'Remove'
+            : confirmAction === 'approve'
+            ? 'Approve'
+            : confirmAction === 'reject'
+            ? 'Reject'
             : 'Unsubscribe'
         }
         cancelText="Cancel"
         onConfirm={
-          confirmAction === 'remove' ? handleConfirmRemove : handleConfirmSubscription
+          confirmAction === 'remove' 
+            ? handleConfirmRemove 
+            : (confirmAction === 'approve' || confirmAction === 'reject')
+            ? handleConfirmApproval
+            : handleConfirmSubscription
         }
         onCancel={handleCancelSubscription}
         confirmButtonClass={
           confirmAction === 'subscribe'
             ? 'bg-primary hover:bg-primary-dark'
+            : confirmAction === 'approve'
+            ? 'bg-green-600 hover:bg-green-700'
             : 'bg-red-600 hover:bg-red-700'
         }
       />
