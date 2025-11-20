@@ -82,11 +82,11 @@ export default function PublicLandingPage() {
   const categories = getCategories();
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="container mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
       {/* Hero Section with Background Image */}
-      <div className="mb-16 overflow-hidden rounded-lg bg-cover bg-center bg-no-repeat relative h-80 bg-gradient-to-r from-primary to-orange-400" style={{backgroundImage: 'url("/banners/public-landing-banner.jpg")'}}>
-        <div className="relative z-10 flex flex-col items-center justify-between h-full p-8 md:flex-row md:p-12">
-          <h1 className="mb-4 text-4xl font-bold text-white md:mb-0">
+      <div className="mb-12 sm:mb-16 overflow-hidden rounded-lg bg-cover bg-center bg-no-repeat relative h-64 sm:h-80 bg-gradient-to-r from-primary to-orange-400" style={{backgroundImage: 'url("/banners/public-landing-banner.jpg")'}}>
+        <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 sm:p-8 md:flex-row md:p-12">
+          <h1 className="mb-4 text-2xl sm:text-4xl font-bold text-white text-center md:text-left md:mb-0">
             Learning that
             <br />
             gets you...
@@ -95,17 +95,17 @@ export default function PublicLandingPage() {
       </div>
 
       {/* About Us Section */}
-      <div className="mb-16 grid grid-cols-1 items-center gap-8 md:grid-cols-2">
-        <div className="flex justify-center">
+      <div className="mb-12 sm:mb-16 grid grid-cols-1 items-center gap-6 sm:gap-8 md:grid-cols-2">
+        <div className="flex justify-center order-2 md:order-1">
           <img
             src="/images/about-us.jpg"
             alt="EduGate platform connecting learners with instructors worldwide"
-            className="h-auto w-full max-w-xs opacity-90"
+            className="h-auto w-full max-w-xs opacity-90 rounded-lg"
           />
         </div>
-        <div>
-          <h2 className="mb-4 text-3xl font-bold">About Us</h2>
-          <p className="text-gray-700">
+        <div className="order-1 md:order-2">
+          <h2 className="mb-4 text-2xl sm:text-3xl font-bold">About Us</h2>
+          <p className="text-sm sm:text-base text-gray-700 leading-relaxed">
             At EduGate, we believe quality education should be accessible to
             everyone. Our platform connects learners with expert instructors,
             offering engaging courses across technology, business, creativity,
@@ -118,33 +118,33 @@ export default function PublicLandingPage() {
       {/* Search Results or Featured Courses */}
       {searchQuery || selectedCategory ? (
         <div>
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               {selectedCategory && (
-                <h2 className="text-3xl font-bold">{selectedCategory} Courses</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold">{selectedCategory} Courses</h2>
               )}
               {searchQuery && !selectedCategory && (
                 <>
-                  <h2 className="text-3xl font-bold">Search Results</h2>
-                  <p className="mt-2 text-sm text-gray-600">
+                  <h2 className="text-2xl sm:text-3xl font-bold">Search Results</h2>
+                  <p className="mt-2 text-xs sm:text-sm text-gray-600">
                     Found {filteredCourses.length} course{filteredCourses.length !== 1 ? 's' : ''} matching "{searchQuery}"
                   </p>
                 </>
               )}
               {searchQuery && selectedCategory && (
                 <>
-                  <h2 className="text-3xl font-bold">Search in {selectedCategory}</h2>
-                  <p className="mt-2 text-sm text-gray-600">
+                  <h2 className="text-2xl sm:text-3xl font-bold">Search in {selectedCategory}</h2>
+                  <p className="mt-2 text-xs sm:text-sm text-gray-600">
                     Found {filteredCourses.length} course{filteredCourses.length !== 1 ? 's' : ''} matching "{searchQuery}"
                   </p>
                 </>
               )}
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               {selectedCategory && (
                 <button
                   onClick={() => setSelectedCategory(null)}
-                  className="rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary hover:text-black transition-colors"
+                  className="rounded-md border border-primary px-4 py-2 text-xs sm:text-sm font-medium text-primary hover:bg-primary hover:text-black transition-colors"
                 >
                   Back to Categories
                 </button>
@@ -152,7 +152,7 @@ export default function PublicLandingPage() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary hover:text-black transition-colors"
+                  className="rounded-md border border-primary px-4 py-2 text-xs sm:text-sm font-medium text-primary hover:bg-primary hover:text-black transition-colors"
                 >
                   Clear Search
                 </button>
@@ -160,7 +160,7 @@ export default function PublicLandingPage() {
             </div>
           </div>
           {error && (
-            <p className="mb-4 rounded-md bg-red-100 p-3 text-sm text-red-700">
+            <p className="mb-4 rounded-md bg-red-100 p-3 text-xs sm:text-sm text-red-700">
               {error}
             </p>
           )}
@@ -182,9 +182,9 @@ export default function PublicLandingPage() {
         <>
           {/* Categories with Thumbnails Section */}
           <div>
-            <h2 className="mb-8 text-3xl font-bold">Explore by Category</h2>
+            <h2 className="mb-6 sm:mb-8 text-2xl sm:text-3xl font-bold">Explore by Category</h2>
             {error && (
-              <p className="mb-4 rounded-md bg-red-100 p-3 text-sm text-red-700">
+              <p className="mb-4 rounded-md bg-red-100 p-3 text-xs sm:text-sm text-red-700">
                 {error}
               </p>
             )}
@@ -195,7 +195,7 @@ export default function PublicLandingPage() {
                 No categories available.
               </div>
             ) : (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
                 {Object.entries(categories).slice(0, 4).map(([category, catCourses]) => {
                   const firstCourse = catCourses[0]; // Get first course for thumbnail
                   return (
@@ -227,16 +227,16 @@ export default function PublicLandingPage() {
                         />
                         {/* Overlay with category name */}
                         <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
-                          <h3 className="text-2xl font-bold text-white text-center px-4">{category}</h3>
+                          <h3 className="text-lg sm:text-2xl font-bold text-white text-center px-4">{category}</h3>
                         </div>
                       </div>
                       
                       {/* Category Info */}
-                      <div className="p-4 pointer-events-none">
-                        <p className="text-sm text-gray-600 mb-3">
+                      <div className="p-3 sm:p-4 pointer-events-none">
+                        <p className="text-xs sm:text-sm text-gray-600 mb-2 sm:mb-3">
                           {catCourses.length} course{catCourses.length !== 1 ? 's' : ''}
                         </p>
-                        <p className="text-sm text-primary font-medium">
+                        <p className="text-xs sm:text-sm text-primary font-medium">
                           Browse {category} →
                         </p>
                       </div>

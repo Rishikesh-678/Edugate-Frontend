@@ -38,28 +38,30 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="container mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
       {/* Banner with Background Image */}
       <div
-        className="mb-16 overflow-hidden rounded-lg bg-cover bg-center bg-no-repeat relative h-80 bg-gradient-to-r from-red-500 to-red-600"
+        className="mb-12 sm:mb-16 overflow-hidden rounded-lg bg-cover bg-center bg-no-repeat relative h-64 sm:h-80 bg-gradient-to-r from-red-500 to-red-600"
         style={{
           backgroundImage:
             'url("/banners/admin-dashboard-banner.jpg")',
         }}
       >
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center justify-between h-full p-8 md:flex-row md:p-12">
-          <div>
-            <h1 className="text-3xl font-bold text-white">
+        <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 sm:p-8 md:flex-row md:p-12">
+          <div className="text-center md:text-left">
+            <h1 className="text-xl sm:text-3xl font-bold text-white">
               Welcome {user?.fullName || 'Admin'} 👋
             </h1>
           </div>
         </div>
       </div>
 
-      <h2 className="mb-8 text-3xl font-bold">Pending Requests..</h2>
-      {error && <p className="text-red-500">{error}</p>}
-      <div className="overflow-x-auto rounded-lg border">
+      <h2 className="mb-8 text-2xl sm:text-3xl font-bold">Pending Requests..</h2>
+      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+      
+      {/* Desktop Table View */}
+      <div className="hidden md:block overflow-x-auto rounded-lg border">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -122,6 +124,54 @@ export default function AdminDashboard() {
             ))}
           </tbody>
         </table>
+      </div>
+      
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {pending.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            No pending requests.
+          </div>
+        ) : (
+          pending.map((course) => (
+            <div key={course.id} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="mb-3">
+                <p className="text-xs font-medium text-gray-500">Course Name</p>
+                <p className="text-base font-semibold text-gray-900 break-words">{course.courseName}</p>
+              </div>
+              <div className="mb-3">
+                <p className="text-xs font-medium text-gray-500">Instructor</p>
+                <p className="text-sm text-gray-700 break-all">{course.creatorEmail}</p>
+              </div>
+              <div className="mb-4">
+                <p className="text-xs font-medium text-gray-500 mb-2">Status</p>
+                <span
+                  className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${
+                    course.status === 'PENDING_REMOVAL'
+                      ? 'bg-red-100 text-red-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}
+                >
+                  {course.status}
+                </span>
+              </div>
+              <div className="flex flex-col gap-2 pt-3 border-t border-gray-200">
+                <button
+                  onClick={() => handleApprove(course.id)}
+                  className="w-full rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 transition-colors"
+                >
+                  Approve
+                </button>
+                <button
+                  onClick={() => handleReject(course.id)}
+                  className="w-full rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 transition-colors"
+                >
+                  Reject
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
       {/* TODO: Add Pagination controls */}
     </div>

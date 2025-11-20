@@ -53,7 +53,7 @@ export default function AddCoursePage() {
   };
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="container mx-auto max-w-2xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
@@ -65,24 +65,24 @@ export default function AddCoursePage() {
         Back
       </button>
 
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Add Course</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold">Add Course</h1>
         <button
           type="submit"
           form="add-course-form"
-          className="rounded-md border border-gray-400 px-6 py-1.5 font-semibold hover:bg-gray-100"
+          className="rounded-md border border-gray-400 px-6 py-2 font-semibold hover:bg-gray-100 w-full sm:w-auto"
         >
           Add
         </button>
       </div>
 
       {message && (
-        <p className="mb-4 rounded-md bg-green-100 p-3 text-center text-sm text-green-700" role="status" aria-live="polite">
+        <p className="mb-4 rounded-md bg-green-100 p-3 text-center text-xs sm:text-sm text-green-700" role="status" aria-live="polite">
           {message}
         </p>
       )}
       {error && (
-        <p className="mb-4 rounded-md bg-red-100 p-3 text-center text-sm text-red-700" role="alert" aria-live="assertive">
+        <p className="mb-4 rounded-md bg-red-100 p-3 text-center text-xs sm:text-sm text-red-700" role="alert" aria-live="assertive">
           {error}
         </p>
       )}
@@ -91,7 +91,7 @@ export default function AddCoursePage() {
         <div>
           <label
             htmlFor="courseName"
-            className="block text-lg font-medium text-gray-700"
+            className="block text-base sm:text-lg font-medium text-gray-700"
           >
             Course Name
           </label>
@@ -101,13 +101,13 @@ export default function AddCoursePage() {
             value={courseName}
             onChange={(e) => setCourseName(e.target.value)}
             required
-            className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
+            className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
         <div>
           <label
             htmlFor="instructor"
-            className="block text-lg font-medium text-gray-700"
+            className="block text-base sm:text-lg font-medium text-gray-700"
           >
             Taken By (Instructor Name)
           </label>
@@ -117,13 +117,13 @@ export default function AddCoursePage() {
             value={instructor}
             onChange={(e) => setInstructor(e.target.value)}
             required
-            className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
+            className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
         <div>
           <label
             htmlFor="category"
-            className="block text-lg font-medium text-gray-700"
+            className="block text-base sm:text-lg font-medium text-gray-700"
           >
             Category
           </label>
@@ -133,13 +133,13 @@ export default function AddCoursePage() {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             required
-            className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
+            className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
         <div>
           <label
             htmlFor="videoLink"
-            className="block text-lg font-medium text-gray-700"
+            className="block text-base sm:text-lg font-medium text-gray-700"
           >
             Video Link
           </label>
@@ -150,13 +150,13 @@ export default function AddCoursePage() {
             onChange={(e) => setVideoLink(e.target.value)}
             required
             placeholder="https://www.youtube.com/watch?v=..."
-            className="mt-1 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
+            className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
         <div>
           <label
             htmlFor="thumbnail"
-            className="block text-lg font-medium text-gray-700"
+            className="block text-base sm:text-lg font-medium text-gray-700"
           >
             Thumbnail
           </label>
@@ -166,14 +166,14 @@ export default function AddCoursePage() {
             accept="image/*"
             onChange={(e) => setThumbnail(e.target.files[0])}
             required
-            className="mt-1 block w-full text-sm text-gray-500 transition-all duration-300
+            className="mt-2 block w-full text-xs sm:text-sm text-gray-500 transition-all duration-300
               file:mr-4 file:rounded-md file:border-0
-              file:bg-primary file:px-4 file:py-2
-              file:text-sm file:font-semibold file:text-black
+              file:bg-primary file:px-3 file:sm:px-4 file:py-1.5 file:sm:py-2
+              file:text-xs file:sm:text-sm file:font-semibold file:text-black
               file:transition-all file:duration-300
               file:cursor-pointer
               hover:file:bg-primary-dark
-              border border-gray-300 bg-gray-50 px-4 py-3 shadow-sm rounded-lg
+              border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 shadow-sm rounded-lg
               hover:bg-white hover:border-primary hover:shadow-md
               focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
           />

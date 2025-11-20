@@ -11,6 +11,7 @@ export default function Header() {
   const [isLoginOpen, setLoginOpen] = useState(false);
   const [isSignUpOpen, setSignUpOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -62,7 +63,7 @@ export default function Header() {
             EduGate
           </Link>
 
-          {/* Search Bar */}
+          {/* Search Bar - Desktop Only */}
           {showSearchBar && (
             <div className="hidden flex-1 px-4 md:flex">
               <form onSubmit={handleSearchSubmit} className="w-full">
@@ -78,7 +79,8 @@ export default function Header() {
             </div>
           )}
 
-          <nav className="flex items-center space-x-4">
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-4">
             {user ? (
               <>
                 {/* Role-Specific Links */}
@@ -140,7 +142,117 @@ export default function Header() {
               </>
             )}
           </nav>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden p-2 rounded-md hover:bg-gray-100"
+            aria-label="Toggle menu"
+            aria-expanded={isMobileMenuOpen}
+          >
+            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+            </svg>
+          </button>
         </div>
+
+        {/* Mobile Search Bar */}
+        {showSearchBar && isMobileMenuOpen && (
+          <div className="md:hidden border-t bg-white px-4 py-3">
+            <form onSubmit={handleSearchSubmit} className="w-full">
+              <input
+                type="search"
+                placeholder={getSearchPlaceholder()}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label={getSearchPlaceholder()}
+                className="w-full rounded-md border px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </form>
+          </div>
+        )}
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <nav className="md:hidden border-t bg-white">
+            <div className="px-4 py-3 space-y-2">
+              {user ? (
+                <>
+                  {/* Role-Specific Links */}
+                  {user.role === 'ROLE_USER' && (
+                    <Link
+                      to="/my-courses"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary hover:text-black transition-colors text-center"
+                    >
+                      My Courses
+                    </Link>
+                  )}
+                  {user.role === 'ROLE_INSTRUCTOR' && (
+                    <Link
+                      to="/instructor/add-course"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary hover:text-black transition-colors text-center"
+                    >
+                      Add Courses
+                    </Link>
+                  )}
+                  {user.role === 'ROLE_ADMIN' && (
+                    <Link
+                      to="/admin/manage"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary hover:text-black transition-colors text-center"
+                    >
+                      Manage
+                    </Link>
+                  )}
+
+                  {/* Profile Link */}
+                  <Link
+                    to={user.role === 'ROLE_INSTRUCTOR' ? '/instructor/profile' : '/profile'}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary hover:text-black transition-colors text-center"
+                  >
+                    Profile
+                  </Link>
+
+                  {/* Logout Button */}
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="block w-full rounded-md border border-red-600 px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-600 hover:text-white transition-colors"
+                  >
+                    Log Out
+                  </button>
+                </>
+              ) : (
+                <>
+                  {/* Public Links */}
+                  <button
+                    onClick={() => {
+                      openSignUp();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="block w-full rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary hover:text-black transition-colors"
+                  >
+                    Sign Up
+                  </button>
+                  <button
+                    onClick={() => {
+                      openLogin();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="block w-full rounded-md bg-primary px-4 py-2 text-sm font-medium text-black hover:bg-primary-dark transition-colors"
+                  >
+                    Log In
+                  </button>
+                </>
+              )}
+            </div>
+          </nav>
+        )}
       </header>
 
       {/* Modals */}

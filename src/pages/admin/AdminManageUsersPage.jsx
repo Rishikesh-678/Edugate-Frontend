@@ -71,7 +71,7 @@ export default function AdminManageUsersPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="container mx-auto max-w-7xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
@@ -83,13 +83,13 @@ export default function AdminManageUsersPage() {
         Back
       </button>
 
-      <h1 className="mb-8 text-3xl font-bold">Manage Users</h1>
-      {error && <p className="text-red-500">{error}</p>}
+      <h1 className="mb-8 text-2xl sm:text-3xl font-bold">Manage Users</h1>
+      {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
       
       {/* Search Results Info */}
       {searchQuery && (
-        <div className="mb-6 flex items-center justify-between">
-          <p className="text-sm text-gray-600">
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <p className="text-xs sm:text-sm text-gray-600">
             Found {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''} matching "{searchQuery}"
           </p>
           <button
@@ -97,14 +97,15 @@ export default function AdminManageUsersPage() {
               setSearchQuery('');
               setFilteredUsers(users);
             }}
-            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100"
+            className="rounded-md border border-gray-300 px-4 py-2 text-xs sm:text-sm font-medium hover:bg-gray-100 w-full sm:w-auto"
           >
             Clear Search
           </button>
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-lg border">
+      {/* Desktop Table View */}
+      <div className="hidden md:block overflow-x-auto rounded-lg border">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
@@ -132,49 +133,106 @@ export default function AdminManageUsersPage() {
             ) : (
               filteredUsers.map((user) => (
                 <tr key={user.id}>
-                <td className="px-6 py-4 font-medium text-gray-900">
-                  {user.fullName}
-                </td>
-                <td className="px-6 py-4 text-gray-700">{user.email}</td>
-                <td className="px-6 py-4">
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      user.role === 'ROLE_ADMIN'
-                        ? 'bg-blue-100 text-blue-800'
-                        : user.role === 'ROLE_INSTRUCTOR'
-                        ? 'bg-purple-100 text-purple-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}
-                  >
-                    {user.role.replace('ROLE_', '')}
-                  </span>
-                </td>
-                <td className="space-x-2 px-6 py-4 text-right">
-                  {user.role === 'ROLE_USER' && (
-                    <button
-                      onClick={() => handlePromote(user.id)}
-                      className="font-medium text-blue-600 hover:text-blue-800"
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    {user.fullName}
+                  </td>
+                  <td className="px-6 py-4 text-gray-700">{user.email}</td>
+                  <td className="px-6 py-4">
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        user.role === 'ROLE_ADMIN'
+                          ? 'bg-blue-100 text-blue-800'
+                          : user.role === 'ROLE_INSTRUCTOR'
+                          ? 'bg-purple-100 text-purple-800'
+                          : 'bg-gray-100 text-gray-800'
+                      }`}
                     >
-                      Promote
-                    </button>
-                  )}
-                  {user.role === 'ROLE_INSTRUCTOR' && (
-                    <button
-                      onClick={() => handleDemote(user.id)}
-                      className="font-medium text-orange-600 hover:text-orange-800"
-                    >
-                      Demote
-                    </button>
-                  )}
-                  {user.role === 'ROLE_ADMIN' && (
-                    <span className="text-sm text-gray-400">N/A</span>
-                  )}
-                </td>
-              </tr>
+                      {user.role.replace('ROLE_', '')}
+                    </span>
+                  </td>
+                  <td className="space-x-2 px-6 py-4 text-right">
+                    {user.role === 'ROLE_USER' && (
+                      <button
+                        onClick={() => handlePromote(user.id)}
+                        className="font-medium text-blue-600 hover:text-blue-800"
+                      >
+                        Promote
+                      </button>
+                    )}
+                    {user.role === 'ROLE_INSTRUCTOR' && (
+                      <button
+                        onClick={() => handleDemote(user.id)}
+                        className="font-medium text-orange-600 hover:text-orange-800"
+                      >
+                        Demote
+                      </button>
+                    )}
+                    {user.role === 'ROLE_ADMIN' && (
+                      <span className="text-sm text-gray-400">N/A</span>
+                    )}
+                  </td>
+                </tr>
               ))
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Card View */}
+      <div className="md:hidden space-y-4">
+        {filteredUsers.length === 0 ? (
+          <div className="text-center py-8 text-gray-600">
+            {searchQuery ? 'No users found matching your search.' : 'No users available.'}
+          </div>
+        ) : (
+          filteredUsers.map((user) => (
+            <div key={user.id} className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="mb-3">
+                <p className="text-sm font-medium text-gray-500">Name</p>
+                <p className="text-base font-semibold text-gray-900">{user.fullName}</p>
+              </div>
+              <div className="mb-3">
+                <p className="text-sm font-medium text-gray-500">Email</p>
+                <p className="text-sm text-gray-700 break-all">{user.email}</p>
+              </div>
+              <div className="mb-4">
+                <p className="text-sm font-medium text-gray-500 mb-2">Role</p>
+                <span
+                  className={`inline-block rounded-full px-3 py-1 text-xs font-medium ${
+                    user.role === 'ROLE_ADMIN'
+                      ? 'bg-blue-100 text-blue-800'
+                      : user.role === 'ROLE_INSTRUCTOR'
+                      ? 'bg-purple-100 text-purple-800'
+                      : 'bg-gray-100 text-gray-800'
+                  }`}
+                >
+                  {user.role.replace('ROLE_', '')}
+                </span>
+              </div>
+              <div className="pt-3 border-t border-gray-200">
+                {user.role === 'ROLE_USER' && (
+                  <button
+                    onClick={() => handlePromote(user.id)}
+                    className="w-full rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                  >
+                    Promote
+                  </button>
+                )}
+                {user.role === 'ROLE_INSTRUCTOR' && (
+                  <button
+                    onClick={() => handleDemote(user.id)}
+                    className="w-full rounded-md bg-orange-600 px-3 py-2 text-sm font-medium text-white hover:bg-orange-700 transition-colors"
+                  >
+                    Demote
+                  </button>
+                )}
+                {user.role === 'ROLE_ADMIN' && (
+                  <p className="text-center text-sm text-gray-400">Admin - No actions available</p>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
       {/* TODO: Add Pagination controls */}
     </div>

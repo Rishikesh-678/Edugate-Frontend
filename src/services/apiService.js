@@ -40,10 +40,15 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
       // Token is invalid or expired
-      localStorage.removeItem('token');
-      delete api.defaults.headers.common['Authorization'];
-      // Reload the window to clear all state and redirect to login
-      window.location.href = '/';
+      // BUT: Don't reload if it's a failed login attempt (which also returns 401)
+      const isLoginRequest = error.config && error.config.url === '/auth/login';
+
+      if (!isLoginRequest) {
+        localStorage.removeItem('token');
+        delete api.defaults.headers.common['Authorization'];
+        // Reload the window to clear all state and redirect to login
+        window.location.href = '/';
+      }
     }
     // Return the error with a fallback message if no response
     if (!error.response) {

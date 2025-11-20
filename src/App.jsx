@@ -9,6 +9,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
 // Import Pages
 import PublicLandingPage from './pages/public/PublicLandingPage.jsx';
 import CourseDetailPage from './pages/public/CourseDetailPage.jsx';
+import NotFoundPage from './pages/public/NotFoundPage.jsx';
 
 // User Pages
 import UserDashboard from './pages/user/UserDashboard.jsx';
@@ -95,7 +96,7 @@ function App() {
         </Route>
 
         {/* --- Not Found --- */}
-        <Route path="*" element={<div>404 Not Found</div>} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
   );

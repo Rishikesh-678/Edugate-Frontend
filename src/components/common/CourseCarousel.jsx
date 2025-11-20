@@ -1,8 +1,22 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import CourseCard from './CourseCard';
 
 export default function CourseCarousel({ courses, linkPrefix = '/course', renderButton = null }) {
   const scrollContainer = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Check if mobile on mount
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640);
+    };
+
+    checkMobile();
+
+    // Add resize listener
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const scroll = (direction) => {
     const container = scrollContainer.current;
@@ -22,10 +36,10 @@ export default function CourseCarousel({ courses, linkPrefix = '/course', render
 
   return (
     <div className="relative">
-      {/* Left Arrow */}
+      {/* Left Arrow - Hidden on mobile */}
       <button
         onClick={() => scroll('left')}
-        className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white shadow-lg p-2 hover:bg-gray-100 transition-colors"
+        className="hidden sm:block absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white shadow-lg p-2 hover:bg-gray-100 transition-colors"
         aria-label="Scroll left"
       >
         <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,10 +47,10 @@ export default function CourseCarousel({ courses, linkPrefix = '/course', render
         </svg>
       </button>
 
-      {/* Scrollable Container */}
+      {/* Scrollable Container - Responsive width for mobile */}
       <div
         ref={scrollContainer}
-        className="flex gap-6 overflow-x-auto scroll-smooth pb-2 mx-10"
+        className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth pb-2 mx-0 sm:mx-10"
         style={{
           scrollBehavior: 'smooth',
           scrollbarWidth: 'thin',
@@ -44,7 +58,14 @@ export default function CourseCarousel({ courses, linkPrefix = '/course', render
         }}
       >
         {courses.map((course) => (
-          <div key={course.id} className="flex-shrink-0" style={{ width: 'calc(20% - 18px)' }}>
+          <div 
+            key={course.id} 
+            className="flex-shrink-0" 
+            style={{ 
+              width: isMobile ? 'calc(100vw - 32px)' : 'calc(20% - 18px)',
+              minWidth: isMobile ? '280px' : 'auto'
+            }}
+          >
             <CourseCard
               course={course}
               linkTo={`${linkPrefix}/${course.id}`}
@@ -55,10 +76,10 @@ export default function CourseCarousel({ courses, linkPrefix = '/course', render
         ))}
       </div>
 
-      {/* Right Arrow */}
+      {/* Right Arrow - Hidden on mobile */}
       <button
         onClick={() => scroll('right')}
-        className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white shadow-lg p-2 hover:bg-gray-100 transition-colors"
+        className="hidden sm:block absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white shadow-lg p-2 hover:bg-gray-100 transition-colors"
         aria-label="Scroll right"
       >
         <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">

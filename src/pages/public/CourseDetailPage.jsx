@@ -160,7 +160,7 @@ export default function CourseDetailPage() {
   const embedUrl = getYoutubeEmbedUrl(course.videoLink);
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="container mx-auto max-w-4xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
@@ -172,21 +172,21 @@ export default function CourseDetailPage() {
         Back
       </button>
 
-      <div className="mb-8 flex flex-col justify-between gap-8 md:flex-row md:gap-12">
+      <div className="mb-8 flex flex-col justify-between gap-6 sm:gap-8 md:flex-row md:gap-12">
         {/* Course Info */}
         <div className="flex-1 md:mb-0">
-          <h1 className="mb-4 text-4xl font-bold leading-tight">{course.courseName}</h1>
-          <div className="space-y-3">
-            <p className="text-base text-gray-700">
+          <h1 className="mb-4 text-2xl sm:text-4xl font-bold leading-tight">{course.courseName}</h1>
+          <div className="space-y-2 sm:space-y-3">
+            <p className="text-sm sm:text-base text-gray-700">
               <span className="font-semibold">Instructor:</span> <span className="text-gray-900">{course.instructor}</span>
             </p>
-            <p className="text-base text-gray-700">
+            <p className="text-sm sm:text-base text-gray-700">
               <span className="font-semibold">Category:</span> <span className="text-gray-900">{course.category}</span>
             </p>
           </div>
         </div>
         {/* Thumbnail & Subscribe Button */}
-        <div className="flex flex-col items-center gap-4 md:w-56">
+        <div className="flex flex-col items-center gap-3 sm:gap-4 md:w-56">
           <img
             src={course.thumbnailUrl}
             alt={course.courseName}
@@ -203,13 +203,13 @@ export default function CourseDetailPage() {
                   <button
                     onClick={handleRemoveCourse}
                     disabled={isRemoving}
-                    className="w-full btn-danger-secondary disabled:opacity-50"
+                    className="w-full btn-danger-secondary disabled:opacity-50 text-xs sm:text-sm"
                   >
                     {isRemoving ? 'Removing...' : 'Remove Course'}
                   </button>
                   <button
                     onClick={() => navigate(`/instructor/edit-course/${course.id}`)}
-                    className="w-full btn-info-secondary"
+                    className="w-full btn-info-secondary text-xs sm:text-sm"
                   >
                     Edit Course
                   </button>
@@ -221,7 +221,7 @@ export default function CourseDetailPage() {
                     <button
                       onClick={handleUnsubscribeClick}
                       disabled={isSubscribing}
-                      className="w-full btn-danger-secondary disabled:opacity-50"
+                      className="w-full btn-danger-secondary disabled:opacity-50 text-xs sm:text-sm"
                     >
                       {isSubscribing ? 'Processing...' : 'Unsubscribe'}
                     </button>
@@ -229,7 +229,7 @@ export default function CourseDetailPage() {
                     <button
                       onClick={handleSubscribeClick}
                       disabled={isSubscribing}
-                      className="w-full btn-secondary disabled:opacity-50"
+                      className="w-full btn-secondary disabled:opacity-50 text-xs sm:text-sm"
                     >
                       {isSubscribing ? 'Processing...' : 'Subscribe'}
                     </button>
@@ -239,7 +239,7 @@ export default function CourseDetailPage() {
             </div>
           )}
           {!user && (
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-xs sm:text-sm text-gray-600">
               <Link to="/" className="font-semibold text-primary hover:underline">
                 Log in
               </Link>{' '}
