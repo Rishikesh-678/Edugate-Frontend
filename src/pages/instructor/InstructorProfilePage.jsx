@@ -7,7 +7,7 @@ import ChangePasswordModal from '../../components/auth/ChangePasswordModal.jsx';
 
 export default function InstructorProfilePage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateUserProfile } = useAuth();
   const [fullName, setFullName] = useState(user?.fullName || '');
   const [email, setEmail] = useState(user?.email || '');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -51,9 +51,8 @@ export default function InstructorProfilePage() {
     try {
       await updateMyProfile({ fullName, phoneNumber });
       setMessage('Profile updated successfully!');
-      // Trigger a page reload or update context to reflect changes in header
-      // This forces the header to update with the new fullName
-      window.dispatchEvent(new CustomEvent('profileUpdated', { detail: { fullName } }));
+      // Update the AuthContext with the new user profile data
+      updateUserProfile({ fullName, phoneNumber });
     } catch (error) {
       setMessage('Failed to update profile.');
     }

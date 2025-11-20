@@ -9,7 +9,7 @@ import CourseCarousel from '../../components/common/CourseCarousel';
 
 export default function UserProfilePage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateUserProfile } = useAuth();
   const [fullName, setFullName] = useState(user?.fullName || '');
   const [email, setEmail] = useState(user?.email || '');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -80,9 +80,8 @@ export default function UserProfilePage() {
     try {
       await updateMyProfile({ fullName, phoneNumber });
       setMessage('Profile updated successfully!');
-      // Trigger a page reload or update context to reflect changes in header
-      // This forces the header to update with the new fullName
-      window.dispatchEvent(new CustomEvent('profileUpdated', { detail: { fullName } }));
+      // Update the AuthContext with the new user profile data
+      updateUserProfile({ fullName, phoneNumber });
     } catch (error) {
       setMessage('Failed to update profile.');
     }

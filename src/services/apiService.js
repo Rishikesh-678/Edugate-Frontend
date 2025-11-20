@@ -128,6 +128,7 @@ export const updateMyProfile = (profileData) =>
 
 // --- Instructor ---
 export const getMyCourses = () => api.get('/instructor/courses/my-courses');
+export const getMyCourse = (courseId) => api.get(`/instructor/courses/${courseId}`);
 export const requestCourseRemoval = (courseId) =>
   api.delete(`/instructor/courses/${courseId}`);
 export const addCourse = (formData) =>
@@ -148,3 +149,6 @@ export const rejectCourse = (courseId) =>
   api.post(`/admin/courses/reject/${courseId}`);
 export const getAdminLogs = (page = 0, size = 10) =>
   api.get(`/admin/logs/me?page=${page}&size=${size}`);
+export const getManagedCourses = () => api.get('/admin/courses/managed');
+export const toggleCourseVisibility = (courseId) => 
+  api.put(`/admin/courses/${courseId}/toggle-visibility`);

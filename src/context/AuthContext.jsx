@@ -20,6 +20,30 @@ export const AuthProvider = ({ children }) => {
     delete api.defaults.headers.common['Authorization'];
   };
 
+  const fetchLatestUserProfile = async () => {
+    try {
+      const response = await api.get('/user/profile/me');
+      if (response && response.data) {
+        const profileData = response.data;
+        setUser((prevUser) => ({
+          ...prevUser,
+          fullName: profileData.fullName,
+          phoneNumber: profileData.phoneNumber,
+        }));
+      }
+    } catch (error) {
+      console.error('Failed to fetch latest user profile:', error);
+      // Don't log out, just continue with what we have from the token
+    }
+  };
+
+  const updateUserProfile = (updatedUserData) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      ...updatedUserData,
+    }));
+  };
+
   useEffect(() => {
     try {
       if (token) {
@@ -36,6 +60,9 @@ export const AuthProvider = ({ children }) => {
           setUser(userData);
           // Set auth header for all future api requests
           api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+          
+          // Fetch the latest user profile from the backend to get updated fullName
+          fetchLatestUserProfile();
         } else {
           // Token is expired
           logout();
@@ -122,6 +149,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateUserProfile,
     isAuthenticated: !!user,
     loading,
   };

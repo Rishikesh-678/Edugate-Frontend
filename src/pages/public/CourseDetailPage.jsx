@@ -273,20 +273,28 @@ export default function CourseDetailPage() {
         <div className={`mb-6 rounded-md p-4 border ${
           normalizedCourse.status === 'REJECTED'
             ? 'bg-red-50 border-red-200'
+            : normalizedCourse.status === 'HIDDEN'
+            ? 'bg-purple-50 border-purple-200'
             : 'bg-yellow-50 border-yellow-200'
         }`}>
           <p className={`text-sm font-semibold ${
             normalizedCourse.status === 'REJECTED'
               ? 'text-red-800'
+              : normalizedCourse.status === 'HIDDEN'
+              ? 'text-purple-800'
               : 'text-yellow-800'
           }`}>
-            Status: <span className="uppercase">{normalizedCourse.status === 'PENDING_ADDITION' ? 'Pending Approval' : normalizedCourse.status}</span>
+            Status: <span className="uppercase">{normalizedCourse.status === 'PENDING_ADDITION' ? 'Pending Approval' : normalizedCourse.status === 'HIDDEN' ? 'Hidden' : normalizedCourse.status}</span>
           </p>
           <p className="text-xs mt-1 text-gray-600">
             {isAdmin 
-              ? 'This course is pending your review. Please approve or reject it.' 
+              ? normalizedCourse.status === 'HIDDEN'
+                ? 'This course is hidden from the public. You can unhide it anytime.'
+                : 'This course is pending your review. Please approve or reject it.' 
               : normalizedCourse.status === 'PENDING_ADDITION' 
               ? 'Your course is pending admin review. It will be visible to users once approved.' 
+              : normalizedCourse.status === 'HIDDEN'
+              ? 'Your course has been hidden by an admin. You can still edit it. Contact admin if you have questions.'
               : 'Your course was rejected. Please review the feedback and update accordingly.'}
           </p>
         </div>

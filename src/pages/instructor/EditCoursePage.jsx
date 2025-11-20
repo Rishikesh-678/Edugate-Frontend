@@ -26,7 +26,7 @@ export default function EditCoursePage() {
     setLoading(true);
     setError('');
     api
-      .get(`/public/courses/${courseId}`)
+      .get(`/instructor/courses/${courseId}`)
       .then((res) => {
         const courseData = res.data || res;
         setCourse(courseData);
@@ -39,7 +39,7 @@ export default function EditCoursePage() {
         });
         setPreviewImage(courseData.thumbnailUrl);
 
-        // Check ownership
+        // Check ownership (should already be verified by backend, but double-check)
         if (user?.role !== 'ROLE_INSTRUCTOR' || courseData.createdById !== user.id) {
           setError('You do not have permission to edit this course.');
         }
@@ -133,7 +133,7 @@ export default function EditCoursePage() {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="container mx-auto max-w-2xl px-4 py-8 sm:py-12 sm:px-6 lg:px-8">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
@@ -145,122 +145,140 @@ export default function EditCoursePage() {
         Back
       </button>
 
-      <h1 className="mb-8 text-3xl font-bold">Edit Course</h1>
-
-      {error && (
-        <div className="mb-4 rounded-md bg-red-100 p-4 text-red-700">
-          {error}
-        </div>
-      )}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold">Edit Course</h1>
+        <button
+          type="submit"
+          form="edit-course-form"
+          disabled={submitting}
+          className="rounded-md border border-gray-400 px-6 py-2 font-semibold hover:bg-gray-100 w-full sm:w-auto disabled:opacity-50 transition-colors"
+        >
+          {submitting ? 'Updating...' : 'Update'}
+        </button>
+      </div>
 
       {success && (
-        <div className="mb-4 rounded-md bg-green-100 p-4 text-green-700">
+        <p className="mb-4 rounded-md bg-green-100 p-3 text-center text-xs sm:text-sm text-green-700" role="status" aria-live="polite">
           {success}
-        </div>
+        </p>
+      )}
+      {error && (
+        <p className="mb-4 rounded-md bg-red-100 p-3 text-center text-xs sm:text-sm text-red-700" role="alert" aria-live="assertive">
+          {error}
+        </p>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form id="edit-course-form" onSubmit={handleSubmit} className="space-y-6">
         {/* Course Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="courseName"
+            className="block text-base sm:text-lg font-medium text-gray-700"
+          >
             Course Name
           </label>
           <input
             type="text"
+            id="courseName"
             name="courseName"
             value={formData.courseName}
             onChange={handleInputChange}
-            placeholder="Enter course name"
-            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
 
         {/* Instructor Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Instructor Name
+          <label
+            htmlFor="instructor"
+            className="block text-base sm:text-lg font-medium text-gray-700"
+          >
+            Taken By (Instructor Name)
           </label>
           <input
             type="text"
+            id="instructor"
             name="instructor"
             value={formData.instructor}
             onChange={handleInputChange}
-            placeholder="Enter instructor name"
-            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
 
         {/* Category */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label
+            htmlFor="category"
+            className="block text-base sm:text-lg font-medium text-gray-700"
+          >
             Category
           </label>
           <input
             type="text"
+            id="category"
             name="category"
             value={formData.category}
             onChange={handleInputChange}
-            placeholder="Enter category"
-            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
 
         {/* Video Link */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Video Link (YouTube URL)
+          <label
+            htmlFor="videoLink"
+            className="block text-base sm:text-lg font-medium text-gray-700"
+          >
+            Video Link
           </label>
           <input
             type="url"
+            id="videoLink"
             name="videoLink"
             value={formData.videoLink}
             onChange={handleInputChange}
-            placeholder="https://youtube.com/watch?v=..."
-            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="https://www.youtube.com/watch?v=..."
+            className="mt-2 block w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 text-sm sm:text-base shadow-sm transition-all duration-300 hover:bg-white hover:border-primary hover:shadow-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30"
           />
         </div>
 
         {/* Thumbnail */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Course Thumbnail (Optional)
+          <label
+            htmlFor="thumbnail"
+            className="block text-base sm:text-lg font-medium text-gray-700"
+          >
+            Thumbnail (Optional)
           </label>
           <input
             type="file"
+            id="thumbnail"
             name="thumbnail"
             onChange={handleFileChange}
             accept="image/*"
-            className="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="mt-2 block w-full text-xs sm:text-sm text-gray-500 transition-all duration-300
+              file:mr-4 file:rounded-md file:border-0
+              file:bg-primary file:px-3 file:sm:px-4 file:py-1.5 file:sm:py-2
+              file:text-xs file:sm:text-sm file:font-semibold file:text-black
+              file:transition-all file:duration-300
+              file:cursor-pointer
+              hover:file:bg-primary-dark
+              border border-gray-300 bg-gray-50 px-4 py-2 sm:py-3 shadow-sm rounded-lg
+              hover:bg-white hover:border-primary hover:shadow-md
+              focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-20"
           />
           {previewImage && (
             <div className="mt-4">
-              <p className="text-sm text-gray-600 mb-2">Preview:</p>
+              <p className="text-xs sm:text-sm text-gray-600 mb-2">Preview:</p>
               <img
                 src={previewImage}
                 alt="Thumbnail preview"
-                className="h-40 w-40 rounded-md object-cover"
+                className="h-40 w-40 rounded-md object-cover shadow-sm"
               />
             </div>
           )}
         </div>
 
-        {/* Buttons */}
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            disabled={submitting}
-            className="rounded-md bg-primary px-6 py-2 font-semibold text-black hover:bg-primary-dark disabled:opacity-50"
-          >
-            {submitting ? 'Updating...' : 'Update Course'}
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate(`/course/${courseId}`)}
-            className="rounded-md border border-gray-300 px-6 py-2 font-semibold hover:bg-gray-100"
-          >
-            Cancel
-          </button>
-        </div>
       </form>
     </div>
   );

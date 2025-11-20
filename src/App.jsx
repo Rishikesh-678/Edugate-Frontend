@@ -1,39 +1,48 @@
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './context/AuthContext.jsx';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { useAuth } from "./context/AuthContext.jsx";
 
 // Import Layouts
-import MainLayout from './components/layout/MainLayout.jsx';
-import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
+import MainLayout from "./components/layout/MainLayout.jsx";
+import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
 
 // Import Pages
-import PublicLandingPage from './pages/public/PublicLandingPage.jsx';
-import CourseDetailPage from './pages/public/CourseDetailPage.jsx';
-import NotFoundPage from './pages/public/NotFoundPage.jsx';
+import PublicLandingPage from "./pages/public/PublicLandingPage.jsx";
+import CourseDetailPage from "./pages/public/CourseDetailPage.jsx";
+import NotFoundPage from "./pages/public/NotFoundPage.jsx";
 
 // User Pages
-import UserDashboard from './pages/user/UserDashboard.jsx';
-import MySubscriptionsPage from './pages/user/MySubscriptionsPage.jsx';
-import UserProfilePage from './pages/user/UserProfilePage.jsx';
+import UserDashboard from "./pages/user/UserDashboard.jsx";
+import MySubscriptionsPage from "./pages/user/MySubscriptionsPage.jsx";
+import UserProfilePage from "./pages/user/UserProfilePage.jsx";
 
 // Instructor Pages
-import InstructorDashboard from './pages/instructor/InstructorDashboard.jsx';
-import InstructorProfilePage from './pages/instructor/InstructorProfilePage.jsx';
-import AddCoursePage from './pages/instructor/AddCoursePage.jsx';
-import EditCoursePage from './pages/instructor/EditCoursePage.jsx';
+import InstructorDashboard from "./pages/instructor/InstructorDashboard.jsx";
+import InstructorProfilePage from "./pages/instructor/InstructorProfilePage.jsx";
+import AddCoursePage from "./pages/instructor/AddCoursePage.jsx";
+import EditCoursePage from "./pages/instructor/EditCoursePage.jsx";
 
 // Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard.jsx';
-import AdminManageUsersPage from './pages/admin/AdminManageUsersPage.jsx';
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AdminManageUsersPage from "./pages/admin/AdminManageUsersPage.jsx";
+import AdminManageCoursesPage from "./pages/admin/AdminManageCoursesPage.jsx";
 
 function App() {
   const { user, loading } = useAuth();
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-100" role="status" aria-live="polite" aria-busy="true">
+      <div
+        className="flex h-screen items-center justify-center bg-gray-100"
+        role="status"
+        aria-live="polite"
+        aria-busy="true"
+      >
         <div className="text-center">
-          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-primary mx-auto" aria-hidden="true"></div>
+          <div
+            className="mb-4 h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-primary mx-auto"
+            aria-hidden="true"
+          ></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -44,15 +53,15 @@ function App() {
     <Routes>
       <Route element={<MainLayout />}>
         {/* --- Public Routes --- */}
-        <Route 
-          path="/" 
+        <Route
+          path="/"
           element={
             user ? (
-              user.role === 'ROLE_ADMIN' ? (
+              user.role === "ROLE_ADMIN" ? (
                 <Navigate to="/admin/dashboard" replace />
-              ) : user.role === 'ROLE_INSTRUCTOR' ? (
+              ) : user.role === "ROLE_INSTRUCTOR" ? (
                 <Navigate to="/instructor/dashboard" replace />
-              ) : user.role === 'ROLE_USER' ? (
+              ) : user.role === "ROLE_USER" ? (
                 <Navigate to="/dashboard" replace />
               ) : (
                 <PublicLandingPage />
@@ -60,35 +69,45 @@ function App() {
             ) : (
               <PublicLandingPage />
             )
-          } 
+          }
         />
         <Route path="/course/:id" element={<CourseDetailPage />} />
 
         {/* --- User Routes --- */}
-        <Route element={<ProtectedRoute allowedRoles={['ROLE_USER']} />}>
+        <Route element={<ProtectedRoute allowedRoles={["ROLE_USER"]} />}>
           <Route path="/dashboard" element={<UserDashboard />} />
           <Route path="/my-courses" element={<MySubscriptionsPage />} />
         </Route>
 
         {/* --- Instructor Routes --- */}
-        <Route element={<ProtectedRoute allowedRoles={['ROLE_INSTRUCTOR']} />}>
-          <Route path="/instructor/dashboard" element={<InstructorDashboard />} />
-          <Route path="/instructor/profile" element={<InstructorProfilePage />} />
+        <Route element={<ProtectedRoute allowedRoles={["ROLE_INSTRUCTOR"]} />}>
+          <Route
+            path="/instructor/dashboard"
+            element={<InstructorDashboard />}
+          />
+          <Route
+            path="/instructor/profile"
+            element={<InstructorProfilePage />}
+          />
           <Route path="/instructor/add-course" element={<AddCoursePage />} />
-          <Route path="/instructor/edit-course/:courseId" element={<EditCoursePage />} />
+          <Route
+            path="/instructor/edit-course/:courseId"
+            element={<EditCoursePage />}
+          />
         </Route>
 
         {/* --- Admin Routes --- */}
-        <Route element={<ProtectedRoute allowedRoles={['ROLE_ADMIN']} />}>
+        <Route element={<ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />}>
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/manage" element={<AdminManageUsersPage />} />
+          <Route path="/admin/manage-courses" element={<AdminManageCoursesPage />} />
         </Route>
 
         {/* --- Shared Routes (All logged-in users) --- */}
         <Route
           element={
             <ProtectedRoute
-              allowedRoles={['ROLE_USER', 'ROLE_INSTRUCTOR', 'ROLE_ADMIN']}
+              allowedRoles={["ROLE_USER", "ROLE_INSTRUCTOR", "ROLE_ADMIN"]}
             />
           }
         >
@@ -100,6 +119,7 @@ function App() {
       </Route>
     </Routes>
   );
+  
 }
 
 export default App;
