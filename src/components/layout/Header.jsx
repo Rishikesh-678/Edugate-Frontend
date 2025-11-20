@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import LoginModal from '../auth/LoginModal';
@@ -12,6 +12,25 @@ export default function Header() {
   const [isSignUpOpen, setSignUpOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [displayName, setDisplayName] = useState(user?.fullName || '');
+
+  // Update displayName when user changes
+  useEffect(() => {
+    if (user?.fullName) {
+      setDisplayName(user.fullName);
+    }
+  }, [user?.fullName]);
+
+  // Listen for profile update events
+  useEffect(() => {
+    const handleProfileUpdate = (event) => {
+      if (event.detail?.fullName) {
+        setDisplayName(event.detail.fullName);
+      }
+    };
+    window.addEventListener('profileUpdated', handleProfileUpdate);
+    return () => window.removeEventListener('profileUpdated', handleProfileUpdate);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -115,7 +134,7 @@ export default function Header() {
                   className="flex h-9 w-9 items-center justify-center rounded-full bg-pink-600 text-sm font-medium text-white hover:bg-pink-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
                   aria-label={`Go to ${user.role === 'ROLE_INSTRUCTOR' ? 'instructor' : 'user'} profile`}
                 >
-                  {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
+                  {displayName?.charAt(0)?.toUpperCase() || 'U'}
                 </Link>
                 <button
                   onClick={handleLogout}

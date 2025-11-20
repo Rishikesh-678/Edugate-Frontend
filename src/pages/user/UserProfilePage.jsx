@@ -80,8 +80,9 @@ export default function UserProfilePage() {
     try {
       await updateMyProfile({ fullName, phoneNumber });
       setMessage('Profile updated successfully!');
-      // Note: AuthContext user won't update fullName automatically.
-      // You might need to add an `updateUser` function to AuthContext.
+      // Trigger a page reload or update context to reflect changes in header
+      // This forces the header to update with the new fullName
+      window.dispatchEvent(new CustomEvent('profileUpdated', { detail: { fullName } }));
     } catch (error) {
       setMessage('Failed to update profile.');
     }
@@ -189,7 +190,7 @@ export default function UserProfilePage() {
           {/* Avatar */}
           <div className="flex items-start justify-center">
             <div className="flex h-48 w-48 items-center justify-center rounded-full bg-pink-600 text-8xl font-medium text-white">
-              {user?.fullName?.charAt(0)?.toUpperCase() || "U"}
+              {fullName?.charAt(0)?.toUpperCase() || "U"}
             </div>
           </div>
         </div>
