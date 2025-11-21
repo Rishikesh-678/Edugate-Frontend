@@ -77,7 +77,8 @@ export default function AddCoursePage() {
       </div>
 
       {message && (
-        <p className="mb-4 rounded-md bg-green-100 p-3 text-center text-xs sm:text-sm text-green-700" role="status" aria-live="polite">
+
+<p className="mb-4 rounded-md bg-green-100 p-3 text-center text-xs sm:text-sm text-green-700" role="status" aria-live="polite">
           {message}
         </p>
       )}
