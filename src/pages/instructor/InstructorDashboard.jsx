@@ -80,7 +80,7 @@ export default function InstructorDashboard() {
         <div className="relative z-10 flex flex-col items-center justify-between h-full p-6 sm:p-8 md:flex-row md:p-12">
           <div className="text-center md:text-left">
             <h1 className="text-xl sm:text-3xl font-bold text-white">
-              Welcome {user?.fullName || 'Instructor'} 👋
+              Welcome {user?.fullName || 'Instructor'} 
             </h1>
           </div>
         </div>

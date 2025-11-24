@@ -12,29 +12,18 @@ export default function CourseCard({
   course,
   linkTo,
   children,
-  placeholderImg,
 }) {
   const defaultImg =
     'https://placehold.co/400x300/F9A826/4A4A4A?text=EduGate';
-  const aifallback =
-    'https://placehold.co/400x300/6B7280/FFFFFF?text=AI';
-  const mlFallback =
-    'https://placehold.co/400x300/3B82F6/FFFFFF?text=ML';
-  
-  const getFallback = () => {
-    if (placeholderImg === 'AI') return aifallback;
-    if (placeholderImg === 'ML') return mlFallback;
-    return defaultImg;
-  }
 
   return (
     <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary group cursor-pointer">
       <Link to={linkTo} className="block overflow-hidden">
         <img
-          src={course.thumbnailUrl || getFallback()}
+          src={course.thumbnailUrl || defaultImg}
           alt={course.courseName}
           className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          onError={(e) => (e.target.src = getFallback())}
+          onError={(e) => (e.target.src = defaultImg)}
         />
       </Link>
       <div className="p-4">

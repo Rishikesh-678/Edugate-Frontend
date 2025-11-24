@@ -12,6 +12,19 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const resetForm = () => {
+    setCurrentPassword('');
+    setNewPassword('');
+    setConfirmPassword('');
+    setError('');
+    setSuccess('');
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onClose();
+  };
+
   // Handle Escape key to close modal - MUST be before early return
   useEffect(() => {
     const handleEscape = (e) => {
@@ -27,18 +40,7 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
     }
   }, [isOpen]);
 
-  const resetForm = () => {
-    setCurrentPassword('');
-    setNewPassword('');
-    setConfirmPassword('');
-    setError('');
-    setSuccess('');
-  };
-
-  const handleClose = () => {
-    resetForm();
-    onClose();
-  };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -90,19 +92,19 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
   if (!isOpen) return null;
 
   // Handle Escape key to close modal
-  useEffect(() => {
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') handleClose();
-    };
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-      return () => {
-        document.removeEventListener('keydown', handleEscape);
-        document.body.style.overflow = 'auto';
-      };
-    }
-  }, [isOpen, handleClose]);
+  // useEffect(() => {
+  //   const handleEscape = (e) => {
+  //     if (e.key === 'Escape') handleClose();
+  //   };
+  //   if (isOpen) {
+  //     document.addEventListener('keydown', handleEscape);
+  //     document.body.style.overflow = 'hidden';
+  //     return () => {
+  //       document.removeEventListener('keydown', handleEscape);
+  //       document.body.style.overflow = 'auto';
+  //     };
+  //   }
+  // }, [isOpen, handleClose]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" role="presentation" onClick={handleClose}>
@@ -213,7 +215,8 @@ export default function ChangePasswordModal({ isOpen, onClose }) {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirm new password"
-                className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
+                className="input-field-modal"
+
               />
               <button
                 type="button"
