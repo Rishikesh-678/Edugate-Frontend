@@ -1,6 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import ForbiddenPage from '../../pages/public/ForbiddenPage';
 
 /**
  * A component to protect routes based on user authentication and role.
@@ -18,8 +19,8 @@ function ProtectedRoute({ allowedRoles }) {
 
   // 2. Check if user has the required role
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    // Logged in, but wrong role. Redirect to their dashboard.
-    return <Navigate to="/dashboard" replace />;
+    // Logged in, but wrong role. Show 403 Forbidden page.
+    return <ForbiddenPage />;
   }
 
   // 3. User is logged in and has the correct role
